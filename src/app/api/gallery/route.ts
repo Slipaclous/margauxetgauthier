@@ -151,16 +151,6 @@ export async function GET() {
     }
 
     // Vérifier si la table existe
-    const { data: tableInfo, error: tableError } = await supabase
-      .from('gallery_metadata')
-      .select('count')
-      .limit(1);
-
-    if (tableError) {
-      console.error('Erreur lors de la vérification de la table:', tableError);
-      throw new Error(`La table gallery_metadata n'existe pas ou n'est pas accessible: ${tableError.message}`);
-    }
-
     const { data: images, error } = await supabase
       .from('gallery_metadata')
       .select('*')
