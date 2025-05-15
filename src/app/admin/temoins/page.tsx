@@ -15,7 +15,7 @@ interface Temoin {
 
 export default function AdminTemoins() {
   const [temoins, setTemoins] = useState<Temoin[]>([]);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Omit<Temoin, 'id'>>({
     nom: '',
     role: 'gauthier',
     telephone: '',
@@ -59,7 +59,7 @@ export default function AdminTemoins() {
       setEditingId(null);
     } else {
       // Ajout d'un nouveau témoin
-      const newTemoin = {
+      const newTemoin: Temoin = {
         ...formData,
         id: Date.now().toString()
       };
