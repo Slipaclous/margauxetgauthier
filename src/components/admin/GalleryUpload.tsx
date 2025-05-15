@@ -95,7 +95,7 @@ export default function GalleryUpload() {
       setSelectedFile(null);
       setCaption('');
       setPreview(null);
-      fetchImages();
+      fetchImages(); // Rafraîchir la liste des images après l'upload
     } catch (err) {
       setError({ 
         message: err instanceof Error ? err.message : 'Une erreur est survenue',
@@ -173,6 +173,28 @@ export default function GalleryUpload() {
           )}
         </button>
       </form>
+
+      {/* Liste des images existantes */}
+      <div className="mt-8">
+        <h3 className="text-xl font-light mb-4">Images existantes</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {images.map((image) => (
+            <div key={image.filename} className="relative aspect-square">
+              <Image
+                src={`/uploads/gallery/${image.filename}`}
+                alt={image.caption}
+                fill
+                className="object-cover rounded-lg"
+              />
+              {image.caption && (
+                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
+                  {image.caption}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 } 

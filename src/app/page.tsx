@@ -179,7 +179,7 @@ export default function Home() {
                         </p>
                         <p className="text-[#171717] font-light">
                           <FaMapMarkerAlt className="inline-block mr-3 text-[#E88032]" />
-                          Lieu : Place d'Enghien
+                          Lieu : Place d&apos;Enghien
                         </p>
                         <p className="text-[#171717] font-light">
                           <FaMapMarkerAlt className="inline-block mr-3 text-[#E88032]" />
