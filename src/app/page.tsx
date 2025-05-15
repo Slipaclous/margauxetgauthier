@@ -315,7 +315,7 @@ export default function Home() {
               <div className="max-w-4xl mx-auto">
                 <p className="text-center mb-12 text-[#171717] font-light">
                   <FaInfoCircle className="inline-block mr-3 text-[#E13B70]" />
-                  Nos témoins seront vos interlocuteurs privilégiés pour toute question concernant l'organisation de la journée.
+                  Nos témoins seront vos interlocuteurs privilégiés pour toute question concernant l&apos;organisation de la journée.
                 </p>
                 <div className="grid md:grid-cols-2 gap-12">
                   <ScrollSection direction="up" delay={0.2}>

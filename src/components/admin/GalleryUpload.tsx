@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaUpload, FaSpinner, FaTrash, FaArrowsAlt } from 'react-icons/fa';
+import { FaUpload, FaSpinner } from 'react-icons/fa';
 import Image from 'next/image';
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -27,8 +26,6 @@ export default function GalleryUpload() {
   const [preview, setPreview] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
   const [images, setImages] = useState<ImageMetadata[]>([]);
-  const [files, setFiles] = useState<File[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     fetchImages();
@@ -53,7 +50,7 @@ export default function GalleryUpload() {
       if (response.ok) {
         setImages(data.images);
       }
-    } catch (err) {
+    } catch {
       // Erreur silencieuse
     }
   };
@@ -70,34 +67,6 @@ export default function GalleryUpload() {
         return;
       }
       setSelectedFile(file);
-      setError(null);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
-  };
-
-  const handleFiles = (files: File[]) => {
-    const validFiles = files.filter(file => {
-      if (!file.type.startsWith('image/')) {
-        setError({ message: `Le fichier ${file.name} n'est pas une image valide.` });
-        return false;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        setError({ message: `Le fichier ${file.name} est trop volumineux (max 5MB).` });
-        return false;
-      }
-      return true;
-    });
-
-    if (validFiles.length > 0) {
-      setFiles(prev => [...prev, ...validFiles]);
       setError(null);
     }
   };
@@ -137,54 +106,6 @@ export default function GalleryUpload() {
     }
   };
 
-  const handleDelete = async (filename: string) => {
-    try {
-      const response = await fetch('/api/gallery', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ filename }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Erreur lors de la suppression');
-      }
-
-      fetchImages();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-    }
-  };
-
-  const handleDragEnd = async (result: any) => {
-    if (!result.destination) return;
-
-    const items = Array.from(images);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    // Mettre à jour l'ordre
-    const updatedItems = items.map((item, index) => ({
-      ...item,
-      order: index,
-    }));
-
-    setImages(updatedItems);
-
-    try {
-      await fetch('/api/gallery', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ images: updatedItems }),
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-    }
-  };
-
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm">
       <h2 className="text-2xl font-light mb-6">Upload d&apos;images</h2>
@@ -203,11 +124,12 @@ export default function GalleryUpload() {
           </label>
 
           {preview && (
-            <div className="mt-4">
-              <img
+            <div className="mt-4 relative w-full h-64">
+              <Image
                 src={preview}
                 alt="Aperçu"
-                className="max-w-full h-auto rounded-lg"
+                fill
+                className="object-contain rounded-lg"
               />
             </div>
           )}
