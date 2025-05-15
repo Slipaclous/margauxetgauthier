@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const filename = `${uniqueSuffix}-${file.name}`;
 
     // Upload du fichier vers Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('gallery')
       .upload(filename, file);
 
