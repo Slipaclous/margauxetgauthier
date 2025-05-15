@@ -6,13 +6,6 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-interface ImageMetadata {
-  filename: string;
-  caption: string;
-  order: number;
-  path: string;
-}
-
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
