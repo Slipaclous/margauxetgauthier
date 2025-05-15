@@ -1,17 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
-type Props = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
-
 export async function DELETE(
   request: Request,
-  props: Props
+  context: any
 ) {
   try {
-    const id = parseInt(props.params.id);
+    const id = parseInt(context.params.id);
     
     if (isNaN(id)) {
       return NextResponse.json(
