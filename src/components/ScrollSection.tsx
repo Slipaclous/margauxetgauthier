@@ -1,90 +1,51 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import { motion, useAnimation, useInView } from 'framer-motion';
 
 interface ScrollSectionProps {
   children: React.ReactNode;
-  className?: string;
-  delay?: number;
   direction?: 'left' | 'right' | 'up' | 'down';
+  delay?: number;
 }
 
-const ScrollSection = ({ 
-  children, 
-  className = '', 
-  delay = 0,
-  direction = 'up'
-}: ScrollSectionProps) => {
+export default function ScrollSection({ children, direction = 'up', delay = 0 }: ScrollSectionProps) {
   const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
+  const isInView = useInView(ref, { once: true });
+  const controls = useAnimation();
 
-  const getDirectionOffset = () => {
-    switch (direction) {
-      case 'left':
-        return { x: -100, y: 0 };
-      case 'right':
-        return { x: 100, y: 0 };
-      case 'up':
-        return { x: 0, y: 50 };
-      case 'down':
-        return { x: 0, y: -50 };
-      default:
-        return { x: 0, y: 50 };
+  useEffect(() => {
+    if (isInView) {
+      controls.start('visible');
     }
+  }, [isInView, controls]);
+
+  const variants = {
+    hidden: {
+      opacity: 0,
+      x: direction === 'left' ? 100 : direction === 'right' ? -100 : 0,
+      y: direction === 'up' ? 100 : direction === 'down' ? -100 : 0,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        delay: delay,
+        ease: [0.25, 0.1, 0.25, 1],
+      },
+    },
   };
-
-  const directionOffset = getDirectionOffset();
-  
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [0, 1, 1, 0]
-  );
-
-  const scale = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [0.95, 1, 1, 0.95]
-  );
-
-  const x = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [directionOffset.x, 0, 0, directionOffset.x]
-  );
-
-  const y = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [directionOffset.y, 0, 0, directionOffset.y]
-  );
-
-  const rotate = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [direction === 'left' ? -2 : direction === 'right' ? 2 : 0, 0, 0, direction === 'left' ? -2 : direction === 'right' ? 2 : 0]
-  );
 
   return (
     <motion.div
       ref={ref}
-      style={{
-        opacity,
-        x,
-        y,
-        scale,
-        rotate,
-        transformOrigin: 'center center'
-      }}
-      className={`${className} will-change-transform`}
+      initial="hidden"
+      animate={controls}
+      variants={variants}
     >
       {children}
     </motion.div>
   );
-};
-
-export default ScrollSection; 
+} 

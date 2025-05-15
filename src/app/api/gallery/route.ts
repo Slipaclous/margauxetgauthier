@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir, readdir, unlink, writeFileSync } from 'fs/promises';
-import { join } from 'path';
+import { promises as fs } from 'fs';
+import path from 'path';
 import { existsSync } from 'fs';
 
 // Fichier pour stocker les métadonnées des images
@@ -33,16 +33,16 @@ export async function POST(request: Request) {
     const filename = `${uniqueSuffix}-${file.name}`;
     
     // Chemin de sauvegarde
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'gallery');
-    const filepath = join(uploadDir, filename);
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'gallery');
+    const filepath = path.join(uploadDir, filename);
 
     // Créer le dossier s'il n'existe pas
     if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+      await fs.mkdir(uploadDir, { recursive: true });
     }
 
     // Sauvegarder le fichier
-    await writeFile(filepath, buffer);
+    await fs.writeFile(filepath, buffer);
 
     // Mettre à jour les métadonnées
     const metadata = await getMetadata();
@@ -81,12 +81,12 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'gallery');
-    const filepath = join(uploadDir, filename);
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'gallery');
+    const filepath = path.join(uploadDir, filename);
 
     // Supprimer le fichier
     if (existsSync(filepath)) {
-      await unlink(filepath);
+      await fs.unlink(filepath);
     }
 
     // Mettre à jour les métadonnées
@@ -130,7 +130,7 @@ export async function PUT(request: Request) {
 
 export async function GET() {
   try {
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'gallery');
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'gallery');
     
     // Vérifier si le dossier existe
     if (!existsSync(uploadDir)) {
@@ -138,7 +138,7 @@ export async function GET() {
     }
 
     // Lire le contenu du dossier
-    const files = await readdir(uploadDir);
+    const files = await fs.readdir(uploadDir);
     
     // Filtrer pour ne garder que les images
     const imageFiles = files.filter(file => 
@@ -176,12 +176,12 @@ export async function GET() {
 
 // Fonctions utilitaires pour gérer les métadonnées
 async function getMetadata(): Promise<ImageMetadata[]> {
-  const metadataPath = join(process.cwd(), 'public', 'uploads', 'gallery', METADATA_FILE);
+  const metadataPath = path.join(process.cwd(), 'public', 'uploads', 'gallery', METADATA_FILE);
   if (!existsSync(metadataPath)) {
     return [];
   }
   try {
-    const data = await readFile(metadataPath, 'utf-8');
+    const data = await fs.readFile(metadataPath, 'utf-8');
     return JSON.parse(data);
   } catch {
     return [];
@@ -189,6 +189,6 @@ async function getMetadata(): Promise<ImageMetadata[]> {
 }
 
 async function saveMetadata(metadata: ImageMetadata[]): Promise<void> {
-  const metadataPath = join(process.cwd(), 'public', 'uploads', 'gallery', METADATA_FILE);
-  await writeFile(metadataPath, JSON.stringify(metadata, null, 2));
+  const metadataPath = path.join(process.cwd(), 'public', 'uploads', 'gallery', METADATA_FILE);
+  await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
 } 

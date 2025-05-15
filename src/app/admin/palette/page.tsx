@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaPalette, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPalette, FaTrash } from 'react-icons/fa';
 
 interface Color {
   id: string;

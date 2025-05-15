@@ -21,13 +21,6 @@ interface Temoin {
   photo?: string;
 }
 
-interface Color {
-  id: string;
-  name: string;
-  value: string;
-  class: string;
-}
-
 interface ContactInfo {
   id: string;
   name: string;
@@ -39,7 +32,6 @@ interface ContactInfo {
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [temoins, setTemoins] = useState<Temoin[]>([]);
-  const [colors, setColors] = useState<Color[]>([]);
   const [contacts, setContacts] = useState<ContactInfo[]>([]);
 
   useEffect(() => {
@@ -56,14 +48,6 @@ export default function Home() {
     const savedTemoins = localStorage.getItem('temoins');
     if (savedTemoins) {
       setTemoins(JSON.parse(savedTemoins));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Charger les couleurs depuis le localStorage
-    const savedColors = localStorage.getItem('palette');
-    if (savedColors) {
-      setColors(JSON.parse(savedColors));
     }
   }, []);
 
@@ -143,7 +127,8 @@ export default function Home() {
                 Palette de Couleurs
               </h2>
               <p className="text-center max-w-2xl mx-auto mb-12 text-[#171717] font-light">
-                Les couleurs qui représentent notre union et notre style
+                Nous avons choisi ces couleurs pour représenter notre style et notre personnalité. 
+                Elles seront présentes tout au long de notre journée.
               </p>
               <ColorPalette />
             </ScrollSection>
@@ -289,12 +274,12 @@ export default function Home() {
                   <div className="space-y-4 text-[#171717] font-light">
                     <p className="flex items-center">
                       <FaGift className="mr-3 text-[#E13B70] flex-shrink-0" />
-                      Vos cadeaux nous aideront à financer l'aménagement de notre nouvelle maison :
+                      Vos cadeaux nous aideront à financer l&#39;aménagement de notre nouvelle maison :
                     </p>
                     <ul className="list-none space-y-2 ml-8">
                       <li className="flex items-center">
                         <span className="w-2 h-2 bg-[#E13B70] rounded-full mr-3"></span>
-                        L'achat de nos gardes-robes
+                        L&#39;achat de nos gardes-robes
                       </li>
                       <li className="flex items-center">
                         <span className="w-2 h-2 bg-[#E13B70] rounded-full mr-3"></span>
