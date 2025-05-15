@@ -236,7 +236,7 @@ const RSVPPage = () => {
                     </td>
                     <td className="px-6 py-4 text-sm text-[#171717]">
                       <div className="space-y-1">
-                        {rsvp.guestList.map((guest) => (
+                        {Array.isArray(rsvp.guestList) && rsvp.guestList.map((guest) => (
                           <div key={guest.id} className="text-xs">
                             {guest.name}
                           </div>
