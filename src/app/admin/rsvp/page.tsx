@@ -54,7 +54,7 @@ const RSVPPage = () => {
         total: data.length,
         attending: data.filter((rsvp: RSVP) => rsvp.attending).length,
         notAttending: data.filter((rsvp: RSVP) => !rsvp.attending).length,
-        totalGuests: data.reduce((acc: number, rsvp: RSVP) => acc + rsvp.guestList.length, 0),
+        totalGuests: data.reduce((acc: number, rsvp: RSVP) => acc + (rsvp.guestList?.length || 0), 0),
       };
       setStats(stats);
     } catch (err) {
