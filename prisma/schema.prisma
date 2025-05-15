@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model RSVP {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  guests    Int      @default(0)
+  message   String?
+  attending Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  guestList Guest[]  // Relation avec les invités
+}
+
+model Guest {
+  id        Int      @id @default(autoincrement())
+  name      String
+  rsvpId    Int      // Clé étrangère vers RSVP
+  rsvp      RSVP     @relation(fields: [rsvpId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+} 
