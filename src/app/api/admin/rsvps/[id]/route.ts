@@ -1,26 +1,34 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'DELETE') {
-    return res.status(405).json({ error: 'Méthode non autorisée' });
-  }
+interface RouteSegmentProps {
+  params: {
+    id: string;
+  };
+}
 
+export async function DELETE(
+  request: Request,
+  { params }: RouteSegmentProps
+) {
   try {
-    const id = parseInt(req.query.id as string);
+    const id = parseInt(params.id);
     
     if (isNaN(id)) {
-      return res.status(400).json({ error: 'ID invalide' });
+      return NextResponse.json(
+        { error: 'ID invalide' },
+        { status: 400 }
+      );
     }
     
     await pool.query('DELETE FROM rsvps WHERE id = $1', [id]);
     
-    return res.status(200).json({ message: 'RSVP supprimé avec succès' });
+    return NextResponse.json({ message: 'RSVP supprimé avec succès' });
   } catch (error) {
     console.error('Erreur lors de la suppression du RSVP:', error);
-    return res.status(500).json({ error: 'Erreur lors de la suppression du RSVP' });
+    return NextResponse.json(
+      { error: 'Erreur lors de la suppression du RSVP' },
+      { status: 500 }
+    );
   }
 } 
