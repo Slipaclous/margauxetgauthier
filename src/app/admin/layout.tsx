@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import AdminNavigation from '@/components/AdminNavigation';
 
 export default function AdminLayout({
