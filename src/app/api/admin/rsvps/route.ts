@@ -1,25 +1,30 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialisation du client Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET() {
   try {
     console.log('Tentative de récupération des RSVPs...');
     
-    // Vérifier que prisma est bien initialisé
-    if (!prisma) {
-      throw new Error('Prisma client non initialisé');
+    // Vérifier que supabase est bien initialisé
+    if (!supabase) {
+      throw new Error('Supabase client non initialisé');
     }
 
-    const rsvps = await prisma.RSVP.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        guestList: true
-      }
-    });
+    const { data: rsvps, error } = await supabase
+      .from('rsvps')
+      .select('*, guest_list(*)')
+      .order('created_at', { ascending: false });
     
-    console.log(`${rsvps.length} RSVPs trouvés`);
+    if (error) {
+      throw error;
+    }
+    
+    console.log(`${rsvps?.length || 0} RSVPs trouvés`);
     
     return NextResponse.json(rsvps);
   } catch (error) {
