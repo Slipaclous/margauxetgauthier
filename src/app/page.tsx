@@ -274,12 +274,12 @@ export default function Home() {
                   <div className="space-y-4 text-[#171717] font-light">
                     <p className="flex items-center">
                       <FaGift className="mr-3 text-[#E13B70] flex-shrink-0" />
-                      Vos cadeaux nous aideront à financer l&#39;aménagement de notre nouvelle maison :
+                      Vos cadeaux nous aideront à financer l&apos;aménagement de notre nouvelle maison :
                     </p>
                     <ul className="list-none space-y-2 ml-8">
                       <li className="flex items-center">
                         <span className="w-2 h-2 bg-[#E13B70] rounded-full mr-3"></span>
-                        L&#39;achat de nos gardes-robes
+                        L&apos;achat de nos gardes-robes
                       </li>
                       <li className="flex items-center">
                         <span className="w-2 h-2 bg-[#E13B70] rounded-full mr-3"></span>

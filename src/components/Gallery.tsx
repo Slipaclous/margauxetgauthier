@@ -56,7 +56,7 @@ export default function Gallery() {
   if (images.length === 0) {
     return (
       <div className="text-center text-gray-500 p-4">
-        Aucune image n'a encore été ajoutée à la galerie.
+        Aucune image n&apos;a encore été ajoutée à la galerie.
       </div>
     );
   }

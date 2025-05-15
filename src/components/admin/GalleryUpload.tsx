@@ -54,7 +54,7 @@ export default function GalleryUpload() {
         setImages(data.images);
       }
     } catch (err) {
-      console.error('Erreur lors du chargement des images:', err);
+      // Erreur silencieuse
     }
   };
 
@@ -102,7 +102,7 @@ export default function GalleryUpload() {
     }
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!selectedFile) return;
 
