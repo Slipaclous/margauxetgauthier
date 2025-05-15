@@ -228,7 +228,7 @@ export default function Home() {
                       </p>
                       <p className="text-[#171717] font-light">
                         Pour que vous puissiez profiter pleinement de cette journée, 
-                        nous avons fait le choix d'une réception sans enfants.
+                        nous avons fait le choix d&apos;une réception sans enfants.
                       </p>
                     </div>
                   </ScrollSection>
