@@ -3,7 +3,7 @@ import pool from '@/lib/db';
 
 export async function DELETE(
   request: Request,
-  context: any
+  context: { params: { id: string } }
 ) {
   try {
     const id = parseInt(context.params.id);
