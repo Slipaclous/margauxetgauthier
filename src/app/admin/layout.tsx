@@ -8,11 +8,9 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminNavigation currentPath={pathname} />
+      <AdminNavigation />
       <main className="container mx-auto px-4 py-8">
         {children}
       </main>
