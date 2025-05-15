@@ -144,8 +144,7 @@ export default function Home() {
                 Confirmer sa présence
               </h2>
               <p className="text-center max-w-2xl mx-auto mb-12 text-[#171717] font-light">
-                Nous serions ravis de vous compter parmi nous pour célébrer notre union. 
-                <span className="text-[#E13B70]"> Merci de confirmer votre présence avant le 15 juin 2025.</span>
+                Nous sommes ravis de vous accueillir pour célébrer notre amour et partager ce moment précieux avec vous. Votre présence est le plus beau cadeau que vous puissiez nous offrir.
               </p>
               <RSVPForm />
             </ScrollSection>
@@ -409,7 +408,7 @@ export default function Home() {
               <div className="max-w-2xl mx-auto">
                 <p className="text-center mb-12 text-[#171717] font-light">
                   <FaInfoCircle className="inline-block mr-3 text-[#E13B70]" />
-                  Pour toute question supplémentaire, n'hésitez pas à nous contacter.
+                  Pour toute question supplémentaire, n&apos;hésitez pas à nous contacter.
                 </p>
                 <div className="grid md:grid-cols-2 gap-12">
                   {contacts.map((contact) => (
