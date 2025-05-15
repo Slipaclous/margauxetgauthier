@@ -29,18 +29,18 @@ export default function AdminContact() {
       setContacts(JSON.parse(savedContacts));
     } else {
       // Contacts par défaut
-      const defaultContacts = [
+      const defaultContacts: ContactInfo[] = [
         {
           id: '1',
           name: 'Margaux',
-          role: 'margaux',
+          role: 'margaux' as const,
           phone: '+32 471 84 34 51',
           email: 'margauxrenard0312@gmail.com'
         },
         {
           id: '2',
           name: 'Gauthier',
-          role: 'gauthier',
+          role: 'gauthier' as const,
           phone: '+32 123 45 67 89',
           email: 'gauthier.minor@gmail.com'
         }
