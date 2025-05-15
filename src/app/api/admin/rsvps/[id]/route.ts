@@ -1,29 +1,20 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server';
+import pool from '@/lib/db';
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id } = params;
     
-    if (isNaN(id)) {
-      return NextResponse.json(
-        { error: 'ID invalide' },
-        { status: 400 }
-      );
-    }
-
-    await prisma.RSVP.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ success: true });
+    await pool.query('DELETE FROM rsvps WHERE id = $1', [id]);
+    
+    return NextResponse.json({ message: 'RSVP supprimé avec succès' });
   } catch (error) {
-    console.error('Erreur lors de la suppression:', error);
+    console.error('Erreur lors de la suppression du RSVP:', error);
     return NextResponse.json(
-      { error: 'Une erreur est survenue lors de la suppression' },
+      { error: 'Erreur lors de la suppression du RSVP' },
       { status: 500 }
     );
   }
