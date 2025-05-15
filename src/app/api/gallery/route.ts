@@ -142,18 +142,41 @@ export async function PUT(request: Request) {
 
 export async function GET() {
   try {
+    console.log('Tentative de récupération des images...');
+    console.log('URL Supabase:', supabaseUrl);
+    
+    // Vérifier que supabase est bien initialisé
+    if (!supabase) {
+      throw new Error('Supabase client non initialisé');
+    }
+
+    // Vérifier si la table existe
+    const { data: tableInfo, error: tableError } = await supabase
+      .from('gallery_metadata')
+      .select('count')
+      .limit(1);
+
+    if (tableError) {
+      console.error('Erreur lors de la vérification de la table:', tableError);
+      throw new Error(`La table gallery_metadata n'existe pas ou n'est pas accessible: ${tableError.message}`);
+    }
+
     const { data: images, error } = await supabase
       .from('gallery_metadata')
       .select('*')
       .order('order', { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Erreur lors de la récupération des images:', error);
+      throw error;
+    }
 
+    console.log(`${images?.length || 0} images trouvées`);
     return NextResponse.json({ images });
   } catch (error) {
-    console.error('Erreur lors de la récupération des images:', error);
+    console.error('Erreur détaillée:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de la récupération des images' },
+      { error: 'Erreur lors de la récupération des images', details: error instanceof Error ? error.message : 'Erreur inconnue' },
       { status: 500 }
     );
   }

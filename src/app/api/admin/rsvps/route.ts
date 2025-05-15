@@ -9,18 +9,31 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export async function GET() {
   try {
     console.log('Tentative de récupération des RSVPs...');
+    console.log('URL Supabase:', supabaseUrl);
     
     // Vérifier que supabase est bien initialisé
     if (!supabase) {
       throw new Error('Supabase client non initialisé');
     }
 
+    // Vérifier si la table existe
+    const { data: tableInfo, error: tableError } = await supabase
+      .from('rsvps')
+      .select('count')
+      .limit(1);
+
+    if (tableError) {
+      console.error('Erreur lors de la vérification de la table:', tableError);
+      throw new Error(`La table rsvps n'existe pas ou n'est pas accessible: ${tableError.message}`);
+    }
+
     const { data: rsvps, error } = await supabase
       .from('rsvps')
-      .select('*, guest_list(*)')
+      .select('*')
       .order('created_at', { ascending: false });
     
     if (error) {
+      console.error('Erreur lors de la récupération des RSVPs:', error);
       throw error;
     }
     
@@ -30,7 +43,7 @@ export async function GET() {
   } catch (error) {
     console.error('Erreur détaillée:', error);
     return NextResponse.json(
-      { error: 'Une erreur est survenue lors de la récupération des données' },
+      { error: 'Une erreur est survenue lors de la récupération des données', details: error instanceof Error ? error.message : 'Erreur inconnue' },
       { status: 500 }
     );
   }
