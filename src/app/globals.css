@@ -1,26 +1,297 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-white: #FFFFFF;
+  --color-black: #171717;
+  --color-orange: #E88032;
+  --color-pink: #E13B70;
+  --color-light-pink: #F5BDC6;
+  --color-black: #1A1A1A;
+  --color-gray: #F8F8F8;
+  --color-dark-gray: #666666;
+  --color-pink: #D4B5B0;
+  --color-light-pink: #F5E6E4;
+  --font-primary: 'Cormorant Garamond', serif;
+  --font-secondary: 'Montserrat', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500&display=swap');
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-secondary);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.heading {
+  font-size: 2.5rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.heading::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background-color: var(--color-black);
+}
+
+.section {
+  padding: 8rem 0;
+  position: relative;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.btn {
+  @apply px-8 py-3 font-light tracking-wider uppercase transition-all duration-300;
+}
+
+.btn-accent {
+  @apply bg-[#171717] text-white hover:bg-[#E13B70] hover:text-white;
+}
+
+.btn-outline {
+  @apply border border-[#171717] text-[#171717] hover:bg-[#171717] hover:text-white;
+}
+
+input, textarea {
+  @apply w-full px-4 py-3 bg-transparent border border-[#171717] focus:border-[#E13B70] focus:outline-none transition-colors duration-300;
+}
+
+/* Ajout d'un effet de survol subtil pour les sections */
+.section {
+  @apply transition-colors duration-300;
+}
+
+.section:hover {
+  @apply bg-[#F5BDC6]/5;
+}
+
+/* Style pour les titres de section */
+.heading {
+  @apply text-4xl md:text-5xl font-light tracking-tight mb-12 relative;
+}
+
+.heading::after {
+  content: '';
+  @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-[1px] bg-[#E88032] opacity-50;
+}
+
+/* Styles pour les inputs */
+input, textarea, select {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--color-black);
+  background: transparent;
+  font-family: var(--font-secondary);
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-pink);
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-dark-gray);
+}
+
+/* Styles pour les checkboxes */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+/* Styles pour les messages */
+.message {
+  padding: 1rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+.message-success {
+  background-color: var(--color-light-pink);
+  color: var(--color-black);
+  border: 1px solid var(--color-pink);
+}
+
+.message-error {
+  background-color: #FFF5F5;
+  color: #C53030;
+  border: 1px solid #FED7D7;
+}
+
+/* Styles pour la grille */
+.grid {
+  display: grid;
+  gap: 2rem;
+}
+
+/* Styles pour les espacements */
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+/* Styles pour les bordures */
+.border-2 {
+  border-width: 1px;
+  border-style: solid;
+}
+
+/* Styles pour les couleurs de fond */
+.bg-[var(--color-white)] {
+  background-color: var(--color-white);
+}
+
+.bg-[var(--color-gray)] {
+  background-color: var(--color-gray);
+}
+
+/* Styles pour les couleurs de texte */
+.text-[var(--color-black)] {
+  color: var(--color-black);
+}
+
+.text-[var(--color-dark-gray)] {
+  color: var(--color-dark-gray);
+}
+
+.text-[var(--color-pink)] {
+  color: var(--color-pink);
+}
+
+/* Styles pour les marges */
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+.mb-12 {
+  margin-bottom: 3rem;
+}
+
+.mb-16 {
+  margin-bottom: 4rem;
+}
+
+/* Styles pour le padding */
+.p-4 {
+  padding: 1rem;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+/* Styles pour les flexbox */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+/* Styles pour le texte */
+.text-center {
+  text-align: center;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.tracking-tight {
+  letter-spacing: -0.025em;
+}
+
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+
+/* Styles pour les grilles responsives */
+@media (min-width: 768px) {
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .md\:text-2xl {
+    font-size: 1.5rem;
+  }
+
+  .md\:text-7xl {
+    font-size: 4.5rem;
+  }
 }
