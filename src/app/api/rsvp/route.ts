@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialisation du client Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: Request) {
   try {
@@ -13,15 +18,25 @@ export async function POST(request: Request) {
       );
     }
 
-    // Insertion dans la base de données
-    const result = await pool.query(
-      `INSERT INTO rsvps (nom, email, telephone, nombre_personnes, message, created_at)
-       VALUES ($1, $2, $3, $4, $5, NOW())
-       RETURNING *`,
-      [nom, email, telephone, nombrePersonnes, message]
-    );
+    // Insertion dans Supabase
+    const { data, error } = await supabase
+      .from('rsvps')
+      .insert([
+        {
+          nom,
+          email,
+          telephone,
+          nombre_personnes: nombrePersonnes,
+          message,
+          created_at: new Date().toISOString()
+        }
+      ])
+      .select()
+      .single();
 
-    return NextResponse.json(result.rows[0]);
+    if (error) throw error;
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error('Erreur lors de l\'enregistrement du RSVP:', error);
     return NextResponse.json(
@@ -33,8 +48,14 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const result = await pool.query('SELECT * FROM rsvps ORDER BY created_at DESC');
-    return NextResponse.json(result.rows);
+    const { data, error } = await supabase
+      .from('rsvps')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error('Erreur lors de la récupération des RSVPs:', error);
     return NextResponse.json(

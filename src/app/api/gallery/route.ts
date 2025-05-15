@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { existsSync } from 'fs';
+import { createClient } from '@supabase/supabase-js';
 
-// Fichier pour stocker les métadonnées des images
-const METADATA_FILE = 'gallery-metadata.json';
+// Initialisation du client Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface ImageMetadata {
   filename: string;
   caption: string;
   order: number;
+  path: string;
 }
 
 export async function POST(request: Request) {
@@ -25,41 +26,50 @@ export async function POST(request: Request) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
     // Créer un nom de fichier unique
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
     const filename = `${uniqueSuffix}-${file.name}`;
-    
-    // Chemin de sauvegarde
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'gallery');
-    const filepath = path.join(uploadDir, filename);
 
-    // Créer le dossier s'il n'existe pas
-    if (!existsSync(uploadDir)) {
-      await fs.mkdir(uploadDir, { recursive: true });
-    }
+    // Upload du fichier vers Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('gallery')
+      .upload(filename, file);
 
-    // Sauvegarder le fichier
-    await fs.writeFile(filepath, buffer);
+    if (uploadError) throw uploadError;
 
-    // Mettre à jour les métadonnées
-    const metadata = await getMetadata();
-    const newOrder = metadata.length;
-    metadata.push({
-      filename,
-      caption: caption || '',
-      order: newOrder
-    });
-    await saveMetadata(metadata);
+    // Récupérer l'URL publique
+    const { data: { publicUrl } } = supabase.storage
+      .from('gallery')
+      .getPublicUrl(filename);
+
+    // Récupérer le dernier ordre
+    const { data: existingImages } = await supabase
+      .from('gallery_metadata')
+      .select('order')
+      .order('order', { ascending: false })
+      .limit(1);
+
+    const newOrder = existingImages?.[0]?.order + 1 || 0;
+
+    // Sauvegarder les métadonnées
+    const { data: metadata, error: metadataError } = await supabase
+      .from('gallery_metadata')
+      .insert([
+        {
+          filename,
+          caption: caption || '',
+          order: newOrder,
+          path: publicUrl
+        }
+      ])
+      .select()
+      .single();
+
+    if (metadataError) throw metadataError;
 
     return NextResponse.json({ 
       success: true,
-      filename: filename,
-      path: `/uploads/gallery/${filename}`,
-      caption: caption || '',
-      order: newOrder
+      ...metadata
     });
   } catch (error) {
     console.error('Erreur lors de l\'upload:', error);
@@ -81,18 +91,20 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'gallery');
-    const filepath = path.join(uploadDir, filename);
+    // Supprimer le fichier du stockage
+    const { error: storageError } = await supabase.storage
+      .from('gallery')
+      .remove([filename]);
 
-    // Supprimer le fichier
-    if (existsSync(filepath)) {
-      await fs.unlink(filepath);
-    }
+    if (storageError) throw storageError;
 
-    // Mettre à jour les métadonnées
-    const metadata = await getMetadata();
-    const updatedMetadata = metadata.filter(img => img.filename !== filename);
-    await saveMetadata(updatedMetadata);
+    // Supprimer les métadonnées
+    const { error: metadataError } = await supabase
+      .from('gallery_metadata')
+      .delete()
+      .eq('filename', filename);
+
+    if (metadataError) throw metadataError;
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -116,7 +128,14 @@ export async function PUT(request: Request) {
     }
 
     // Mettre à jour les métadonnées
-    await saveMetadata(images);
+    const { error } = await supabase
+      .from('gallery_metadata')
+      .upsert(images.map((img, index) => ({
+        ...img,
+        order: index
+      })));
+
+    if (error) throw error;
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -130,39 +149,12 @@ export async function PUT(request: Request) {
 
 export async function GET() {
   try {
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'gallery');
-    
-    // Vérifier si le dossier existe
-    if (!existsSync(uploadDir)) {
-      return NextResponse.json({ images: [] });
-    }
+    const { data: images, error } = await supabase
+      .from('gallery_metadata')
+      .select('*')
+      .order('order', { ascending: true });
 
-    // Lire le contenu du dossier
-    const files = await fs.readdir(uploadDir);
-    
-    // Filtrer pour ne garder que les images
-    const imageFiles = files.filter(file => 
-      /\.(jpg|jpeg|png|gif|webp)$/i.test(file)
-    );
-
-    // Récupérer les métadonnées
-    const metadata = await getMetadata();
-
-    // Créer la liste des images avec leurs métadonnées
-    const images = imageFiles.map(filename => {
-      const imageMetadata = metadata.find(img => img.filename === filename) || {
-        filename,
-        caption: '',
-        order: metadata.length
-      };
-      return {
-        ...imageMetadata,
-        path: `/uploads/gallery/${filename}`
-      };
-    });
-
-    // Trier les images selon leur ordre
-    images.sort((a, b) => a.order - b.order);
+    if (error) throw error;
 
     return NextResponse.json({ images });
   } catch (error) {
@@ -172,23 +164,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
-
-// Fonctions utilitaires pour gérer les métadonnées
-async function getMetadata(): Promise<ImageMetadata[]> {
-  const metadataPath = path.join(process.cwd(), 'public', 'uploads', 'gallery', METADATA_FILE);
-  if (!existsSync(metadataPath)) {
-    return [];
-  }
-  try {
-    const data = await fs.readFile(metadataPath, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-async function saveMetadata(metadata: ImageMetadata[]): Promise<void> {
-  const metadataPath = path.join(process.cwd(), 'public', 'uploads', 'gallery', METADATA_FILE);
-  await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
 } 

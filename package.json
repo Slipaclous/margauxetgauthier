@@ -12,6 +12,7 @@
     "@gsap/react": "^2.1.2",
     "@hello-pangea/dnd": "^18.0.1",
     "@prisma/client": "^6.8.0",
+    "@supabase/supabase-js": "^2.49.4",
     "@types/pg": "^8.15.2",
     "framer-motion": "^12.11.3",
     "gsap": "^3.13.0",
