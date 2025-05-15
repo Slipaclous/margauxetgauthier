@@ -3,10 +3,10 @@ import pool from '@/lib/db';
 
 export async function DELETE(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = parseInt(context.params.id);
+    const id = parseInt(params.id);
     
     if (isNaN(id)) {
       return NextResponse.json(
