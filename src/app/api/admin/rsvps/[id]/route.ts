@@ -1,12 +1,5 @@
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-
-type Context = {
-  params: {
-    id: string;
-  };
-};
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -14,10 +7,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function DELETE(
   request: NextRequest,
-  context: Context
+  { params }: any
 ) {
   try {
-    const rsvpId = context.params.id;
+    const rsvpId = params.id;
     if (!rsvpId) {
       return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
     }
