@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import { FaImages, FaEnvelope, FaPalette, FaUserFriends, FaLock } from 'react-icons/fa';
 import Link from 'next/link';
 
@@ -9,7 +9,7 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     // Vérification côté client uniquement
@@ -48,7 +48,7 @@ export default function AdminPage() {
           <div className="flex flex-col items-center mb-6">
             <FaLock className="w-10 h-10 text-[#E13B70] mb-2" />
             <h2 className="text-2xl font-light mb-2">Connexion Admin</h2>
-            <p className="text-gray-500 text-sm text-center">Veuillez entrer le mot de passe pour accéder à l'administration.</p>
+            <p className="text-gray-500 text-sm text-center">Veuillez entrer le mot de passe pour accéder à l&apos;administration.</p>
           </div>
           <input
             type="password"
