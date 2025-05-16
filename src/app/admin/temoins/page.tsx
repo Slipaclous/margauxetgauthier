@@ -35,7 +35,7 @@ export default function AdminTemoins() {
         const res = await fetch('/api/admin/temoins');
         const data = await res.json();
         setTemoins(data || []);
-      } catch (err) {
+      } catch (_) {
         setError('Erreur lors du chargement des témoins');
       } finally {
         setLoading(false);
@@ -57,37 +57,46 @@ export default function AdminTemoins() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (editingId) {
-      // Mise à jour d'un témoin existant
-      const updatedTemoins = temoins.map(temoin => 
-        temoin.id === editingId ? { ...formData, id: editingId } : temoin
-      );
-      setTemoins(updatedTemoins);
-      localStorage.setItem('temoins', JSON.stringify(updatedTemoins));
+    setLoading(true);
+    try {
+      if (editingId) {
+        // Mise à jour via Supabase
+        const res = await fetch(`/api/admin/temoins/${editingId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Erreur lors de la modification');
+        const updatedWitness = await res.json();
+        setTemoins(prev => prev.map(w => w.id === editingId ? updatedWitness : w));
+      } else {
+        // Ajout d'un nouveau témoin via Supabase
+        const res = await fetch('/api/admin/temoins', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Erreur lors de l\'ajout');
+        const newWitness = await res.json();
+        setTemoins(prev => [newWitness, ...prev]);
+      }
+      setFormData({
+        nom: '',
+        role: 'gauthier',
+        telephone: '',
+        email: '',
+        photo: ''
+      });
+      setPreviewUrl('');
       setEditingId(null);
-    } else {
-      // Ajout d'un nouveau témoin
-      const newTemoin: Temoin = {
-        ...formData,
-        id: Date.now().toString()
-      };
-      const updatedTemoins = [...temoins, newTemoin];
-      setTemoins(updatedTemoins);
-      localStorage.setItem('temoins', JSON.stringify(updatedTemoins));
+      setError(null);
+    } catch (_) {
+      setError('Erreur lors de l\'ajout ou modification du témoin');
+    } finally {
+      setLoading(false);
     }
-
-    // Réinitialiser le formulaire
-    setFormData({
-      nom: '',
-      role: 'gauthier',
-      telephone: '',
-      email: '',
-      photo: ''
-    });
-    setPreviewUrl('');
   };
 
   const handleEdit = (temoin: Temoin) => {
@@ -102,10 +111,17 @@ export default function AdminTemoins() {
     setEditingId(temoin.id);
   };
 
-  const handleDelete = (id: string) => {
-    const updatedTemoins = temoins.filter(temoin => temoin.id !== id);
-    setTemoins(updatedTemoins);
-    localStorage.setItem('temoins', JSON.stringify(updatedTemoins));
+  const handleDelete = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/temoins/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erreur lors de la suppression');
+      setTemoins(prev => prev.filter(w => w.id !== id));
+    } catch (_) {
+      setError('Erreur lors de la suppression');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
