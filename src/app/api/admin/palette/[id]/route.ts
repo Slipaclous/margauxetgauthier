@@ -5,15 +5,21 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: Props
 ): Promise<NextResponse> {
   try {
     const { error } = await supabase
       .from('palette')
       .delete()
-      .eq('id', params.id);
+      .eq('id', props.params.id);
 
     if (error) throw error;
     return NextResponse.json({ message: 'Couleur supprimée avec succès' });
@@ -28,7 +34,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  props: Props
 ): Promise<NextResponse> {
   try {
     const body = await req.json();
@@ -36,7 +42,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('color_palette')
       .update({ name, value, class: colorClass })
-      .eq('id', params.id)
+      .eq('id', props.params.id)
       .select();
     if (error) throw error;
     return NextResponse.json(data[0]);
