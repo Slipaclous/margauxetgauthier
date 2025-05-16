@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaImages, FaUserFriends, FaCog, FaSignOutAlt, FaHome, FaPalette, FaEnvelope, FaUser } from 'react-icons/fa';
+import { FaImages, FaUserFriends, FaCog, FaSignOutAlt, FaHome, FaPalette, FaEnvelope, FaUser, FaExternalLinkAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
 export default function AdminNavigation() {
@@ -98,6 +98,15 @@ export default function AdminNavigation() {
             </Link>
           </div>
           <div className="flex items-center">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center px-4 text-gray-700 hover:text-[#E13B70] transition-colors"
+            >
+              <FaExternalLinkAlt className="w-5 h-5 mr-2" />
+              <span className="font-light">Voir le site</span>
+            </a>
             <button
               onClick={handleLogout}
               className="flex items-center px-4 text-gray-700 hover:text-[#E13B70] transition-colors"
