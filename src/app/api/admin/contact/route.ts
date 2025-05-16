@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const { data, error } = await supabase
       .from('contacts')
@@ -21,9 +21,9 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await request.json();
     const { name, role, phone, email } = body;
     const { data, error } = await supabase
       .from('contacts')
@@ -37,4 +37,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-} 
+}
