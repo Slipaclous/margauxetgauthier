@@ -154,13 +154,28 @@ export default function RSVPForm() {
             onChange={handleNombrePersonnesChange}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#E13B70] focus:ring-[#E13B70]"
           >
-            {[1, 2, 3, 4, 5].map(num => (
+            {[1, 2].map(num => (
               <option key={num} value={num}>
                 {num} {num === 1 ? 'personne' : 'personnes'}
               </option>
             ))}
           </select>
         </div>
+
+        {formData.nombrePersonnes === '2' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nom de votre invité
+            </label>
+            <input
+              type="text"
+              value={formData.guests[0]}
+              onChange={e => handleGuestChange(0, e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#E13B70] focus:ring-[#E13B70]"
+              placeholder="Nom de votre invité"
+            />
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -188,23 +203,6 @@ export default function RSVPForm() {
               <span className="ml-2">Non</span>
             </label>
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Noms des invités (hors vous-même)
-          </label>
-          {formData.guests.map((guest, idx) => (
-            <div key={idx} className="flex items-center gap-2 mb-2">
-              <input
-                type="text"
-                value={guest}
-                onChange={e => handleGuestChange(idx, e.target.value)}
-                className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-[#E13B70] focus:ring-[#E13B70]"
-                placeholder={`Invité ${idx + 1}`}
-              />
-            </div>
-          ))}
         </div>
 
         <div>
