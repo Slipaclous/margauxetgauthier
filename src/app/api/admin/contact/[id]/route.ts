@@ -5,15 +5,22 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+type RouteParams = {
+  params: {
+    id: string;
+  };
+};
+
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteParams
 ): Promise<NextResponse> {
   try {
+    const { id } = context.params;
     const { error } = await supabase
       .from('contacts')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) throw error;
     return NextResponse.json({ message: 'Contact supprimé avec succès' });
@@ -27,16 +34,17 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: RouteParams
 ): Promise<NextResponse> {
   try {
-    const body = await req.json();
+    const { id } = context.params;
+    const body = await request.json();
     const { name, role, phone, email } = body;
     const { data, error } = await supabase
       .from('contacts')
       .update({ name, role, phone, email })
-      .eq('id', params.id)
+      .eq('id', id)
       .select();
     if (error) throw error;
     return NextResponse.json(data[0]);
@@ -47,4 +55,4 @@ export async function PATCH(
       { status: 500 }
     );
   }
-} 
+}
