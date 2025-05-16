@@ -5,21 +5,15 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
 export async function DELETE(
   request: NextRequest,
-  props: Props
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     const { error } = await supabase
       .from('temoins')
       .delete()
-      .eq('id', props.params.id);
+      .eq('id', params.id);
 
     if (error) throw error;
     return NextResponse.json({ message: 'Témoin supprimé avec succès' });
@@ -34,7 +28,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  props: Props
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     const body = await req.json();
@@ -42,7 +36,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('temoins')
       .update({ nom, role, telephone, email, photo })
-      .eq('id', props.params.id)
+      .eq('id', params.id)
       .select();
     if (error) throw error;
     return NextResponse.json(data[0]);

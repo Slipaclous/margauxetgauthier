@@ -5,28 +5,22 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
 export async function DELETE(
   request: NextRequest,
-  props: Props
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     const { error } = await supabase
-      .from('palette')
+      .from('palettes')
       .delete()
-      .eq('id', props.params.id);
+      .eq('id', params.id);
 
     if (error) throw error;
-    return NextResponse.json({ message: 'Couleur supprimée avec succès' });
+    return NextResponse.json({ message: 'Palette supprimée avec succès' });
   } catch (error) {
-    console.error('Erreur lors de la suppression de la couleur:', error);
+    console.error('Erreur lors de la suppression de la palette:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de la suppression de la couleur' },
+      { error: 'Erreur lors de la suppression de la palette' },
       { status: 500 }
     );
   }
@@ -34,20 +28,20 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  props: Props
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     const body = await req.json();
-    const { name, value, class: colorClass } = body;
+    const { nom, couleurs } = body;
     const { data, error } = await supabase
-      .from('color_palette')
-      .update({ name, value, class: colorClass })
-      .eq('id', props.params.id)
+      .from('palettes')
+      .update({ nom, couleurs })
+      .eq('id', params.id)
       .select();
     if (error) throw error;
     return NextResponse.json(data[0]);
   } catch (error) {
-    console.error('Erreur lors de la modification de la couleur:', error);
+    console.error('Erreur lors de la modification de la palette:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la modification' },
       { status: 500 }
