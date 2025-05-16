@@ -7,13 +7,13 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const { error } = await supabase
       .from('contacts')
       .delete()
-      .eq('id', context.params.id);
+      .eq('id', params.id);
 
     if (error) throw error;
     return NextResponse.json({ message: 'Contact supprimé avec succès' });
@@ -28,7 +28,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const body = await req.json();
@@ -36,7 +36,7 @@ export async function PATCH(
     const { data, error } = await supabase
       .from('contacts')
       .update({ nom, role, telephone, email })
-      .eq('id', context.params.id)
+      .eq('id', params.id)
       .select();
     if (error) throw error;
     return NextResponse.json(data[0]);
