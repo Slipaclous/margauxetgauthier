@@ -8,7 +8,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
-) {
+): Promise<NextResponse> {
   try {
     const { error } = await supabase
       .from('palette')
@@ -29,7 +29,7 @@ export async function DELETE(
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
-) {
+): Promise<NextResponse> {
   try {
     const body = await req.json();
     const { name, value, class: colorClass } = body;
