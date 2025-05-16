@@ -5,13 +5,10 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-interface ContactParams {
-  id: string;
-}
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: ContactParams }
+  { params }: any
 ): Promise<NextResponse> {
   try {
     const { id } = params;
@@ -33,7 +30,7 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: ContactParams }
+  { params }: any
 ): Promise<NextResponse> {
   try {
     const { id } = params;
