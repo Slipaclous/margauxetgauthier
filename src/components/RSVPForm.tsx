@@ -72,17 +72,21 @@ export default function RSVPForm() {
     });
   };
 
-  const addGuest = () => {
-    setFormData(prev => ({
-      ...prev,
-      guests: [...prev.guests, '']
-    }));
-  };
-
-  const removeGuest = (index: number) => {
+  const handleNombrePersonnesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
     setFormData(prev => {
-      const guests = prev.guests.filter((_, i) => i !== index);
-      return { ...prev, guests };
+      const nb = Number(value);
+      let guests = prev.guests;
+      if (nb - 1 > guests.length) {
+        guests = [...guests, ...Array(nb - 1 - guests.length).fill('')];
+      } else if (nb - 1 < guests.length) {
+        guests = guests.slice(0, nb - 1);
+      }
+      return {
+        ...prev,
+        nombrePersonnes: value,
+        guests,
+      };
     });
   };
 
@@ -147,7 +151,7 @@ export default function RSVPForm() {
             name="nombrePersonnes"
             required
             value={formData.nombrePersonnes}
-            onChange={handleChange}
+            onChange={handleNombrePersonnesChange}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#E13B70] focus:ring-[#E13B70]"
           >
             {[1, 2, 3, 4, 5].map(num => (
@@ -199,12 +203,8 @@ export default function RSVPForm() {
                 className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-[#E13B70] focus:ring-[#E13B70]"
                 placeholder={`Invité ${idx + 1}`}
               />
-              {formData.guests.length > 1 && (
-                <button type="button" onClick={() => removeGuest(idx)} className="text-red-500 text-xs">Supprimer</button>
-              )}
             </div>
           ))}
-          <button type="button" onClick={addGuest} className="text-[#E13B70] text-xs mt-1">+ Ajouter un invité</button>
         </div>
 
         <div>

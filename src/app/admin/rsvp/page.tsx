@@ -7,20 +7,21 @@ import { FaImages, FaUserFriends, FaCog, FaSignOutAlt, FaHome } from 'react-icon
 import { useRouter } from 'next/navigation';
 
 interface Guest {
-  id: number;
+  id: string;
   name: string;
-  createdAt: string;
+  created_at: string;
 }
 
 interface RSVP {
-  id: number;
-  name: string;
+  id: string;
+  nom: string;
   email: string;
-  guests: number;
+  telephone: string;
+  nombre_personnes: number;
   message: string | null;
   attending: boolean;
-  createdAt: string;
-  guestList: Guest[];
+  created_at: string;
+  guest_list: Guest[];
 }
 
 const RSVPPage = () => {
@@ -54,7 +55,7 @@ const RSVPPage = () => {
         total: data.length,
         attending: data.filter((rsvp: RSVP) => rsvp.attending).length,
         notAttending: data.filter((rsvp: RSVP) => !rsvp.attending).length,
-        totalGuests: data.reduce((acc: number, rsvp: RSVP) => acc + (rsvp.guestList?.length || 0), 0),
+        totalGuests: data.reduce((acc: number, rsvp: RSVP) => acc + (rsvp.guest_list?.length || 0), 0),
       };
       setStats(stats);
     } catch (err) {
@@ -223,12 +224,12 @@ const RSVPPage = () => {
               <tbody>
                 {rsvps.map((rsvp) => (
                   <tr key={rsvp.id} className="border-b border-gray-100">
-                    <td className="px-6 py-4 text-sm text-[#171717]">{rsvp.name}</td>
+                    <td className="px-6 py-4 text-sm text-[#171717]">{rsvp.nom}</td>
                     <td className="px-6 py-4 text-sm text-[#171717]">{rsvp.email}</td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs ${
-                        rsvp.attending 
-                          ? 'bg-green-100 text-green-800' 
+                        rsvp.attending
+                          ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
                         {rsvp.attending ? 'Présent' : 'Absent'}
@@ -236,18 +237,20 @@ const RSVPPage = () => {
                     </td>
                     <td className="px-6 py-4 text-sm text-[#171717]">
                       <div className="space-y-1">
-                        {Array.isArray(rsvp.guestList) && rsvp.guestList.map((guest) => (
-                          <div key={guest.id} className="text-xs">
-                            {guest.name}
-                          </div>
-                        ))}
+                        {Array.isArray(rsvp.guest_list) && rsvp.guest_list.length > 0 ? (
+                          rsvp.guest_list.map((guest) => (
+                            <div key={guest.id} className="text-xs">
+                              {guest.name}
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-xs text-gray-400">-</span>
+                        )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#171717] max-w-xs truncate">
-                      {rsvp.message || '-'}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-[#171717] max-w-xs truncate">{rsvp.message || '-'}</td>
                     <td className="px-6 py-4 text-sm text-[#171717]">
-                      {new Date(rsvp.createdAt).toLocaleDateString('fr-FR')}
+                      {rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString('fr-FR') : '-'}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <button
@@ -270,7 +273,7 @@ const RSVPPage = () => {
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <h3 className="text-lg font-medium mb-4">Confirmer la suppression</h3>
               <p className="mb-6">
-                Êtes-vous sûr de vouloir supprimer la réponse de {rsvpToDelete.name} ?
+                Êtes-vous sûr de vouloir supprimer la réponse de {rsvpToDelete.nom} ?
                 Cette action est irréversible.
               </p>
               <div className="flex justify-end gap-4">
