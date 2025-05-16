@@ -8,18 +8,18 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: Request) {
   try {
-    const { nom, email, telephone, nombrePersonnes, message } = await request.json();
+    const { nom, email, telephone, nombrePersonnes, message, attending, guests } = await request.json();
 
     // Validation des données
-    if (!nom || !email || !nombrePersonnes) {
+    if (!nom || !email || typeof attending !== 'boolean') {
       return NextResponse.json(
-        { error: 'Nom, email et nombre de personnes sont requis' },
+        { error: 'Nom, email et présence sont requis' },
         { status: 400 }
       );
     }
 
-    // Insertion dans Supabase
-    const { data, error } = await supabase
+    // Insertion du RSVP principal
+    const { data: rsvp, error: rsvpError } = await supabase
       .from('rsvps')
       .insert([
         {
@@ -28,15 +28,29 @@ export async function POST(request: Request) {
           telephone,
           nombre_personnes: nombrePersonnes,
           message,
+          attending,
           created_at: new Date().toISOString()
         }
       ])
       .select()
       .single();
 
-    if (error) throw error;
+    if (rsvpError) throw rsvpError;
 
-    return NextResponse.json(data);
+    // Insertion des invités
+    if (Array.isArray(guests) && guests.length > 0) {
+      const guestRows = guests.map((name: string) => ({
+        rsvp_id: rsvp.id,
+        name,
+        created_at: new Date().toISOString()
+      }));
+      const { error: guestError } = await supabase
+        .from('guest_list')
+        .insert(guestRows);
+      if (guestError) throw guestError;
+    }
+
+    return NextResponse.json(rsvp);
   } catch (error) {
     console.error('Erreur lors de l\'enregistrement du RSVP:', error);
     return NextResponse.json(

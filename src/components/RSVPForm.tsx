@@ -9,7 +9,9 @@ export default function RSVPForm() {
     email: '',
     telephone: '',
     nombrePersonnes: '1',
-    message: ''
+    message: '',
+    attending: true,
+    guests: ['']
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -25,7 +27,11 @@ export default function RSVPForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          guests: formData.guests.filter((g) => g.trim() !== ''),
+          nombrePersonnes: Number(formData.nombrePersonnes),
+        }),
       });
 
       if (!response.ok) {
@@ -39,7 +45,9 @@ export default function RSVPForm() {
         email: '',
         telephone: '',
         nombrePersonnes: '1',
-        message: ''
+        message: '',
+        attending: true,
+        guests: ['']
       });
     } catch (error) {
       setStatus('error');
@@ -48,11 +56,34 @@ export default function RSVPForm() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
+  };
+
+  // Gestion des invités dynamiques
+  const handleGuestChange = (index: number, value: string) => {
+    setFormData(prev => {
+      const guests = [...prev.guests];
+      guests[index] = value;
+      return { ...prev, guests };
+    });
+  };
+
+  const addGuest = () => {
+    setFormData(prev => ({
+      ...prev,
+      guests: [...prev.guests, '']
+    }));
+  };
+
+  const removeGuest = (index: number) => {
+    setFormData(prev => {
+      const guests = prev.guests.filter((_, i) => i !== index);
+      return { ...prev, guests };
+    });
   };
 
   return (
@@ -125,6 +156,55 @@ export default function RSVPForm() {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Serez-vous présent ?
+          </label>
+          <div className="flex gap-4">
+            <label>
+              <input
+                type="radio"
+                name="attending"
+                value="true"
+                checked={formData.attending === true}
+                onChange={() => setFormData(f => ({ ...f, attending: true }))}
+              />
+              <span className="ml-2">Oui</span>
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="attending"
+                value="false"
+                checked={formData.attending === false}
+                onChange={() => setFormData(f => ({ ...f, attending: false }))}
+              />
+              <span className="ml-2">Non</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Noms des invités (hors vous-même)
+          </label>
+          {formData.guests.map((guest, idx) => (
+            <div key={idx} className="flex items-center gap-2 mb-2">
+              <input
+                type="text"
+                value={guest}
+                onChange={e => handleGuestChange(idx, e.target.value)}
+                className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-[#E13B70] focus:ring-[#E13B70]"
+                placeholder={`Invité ${idx + 1}`}
+              />
+              {formData.guests.length > 1 && (
+                <button type="button" onClick={() => removeGuest(idx)} className="text-red-500 text-xs">Supprimer</button>
+              )}
+            </div>
+          ))}
+          <button type="button" onClick={addGuest} className="text-[#E13B70] text-xs mt-1">+ Ajouter un invité</button>
         </div>
 
         <div>
