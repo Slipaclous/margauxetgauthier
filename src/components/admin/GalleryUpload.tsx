@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaUpload, FaSpinner } from 'react-icons/fa';
+import { FaUpload, FaSpinner, FaTrash } from 'react-icons/fa';
 import Image from 'next/image';
 
 interface FileWithPreview extends File {
@@ -106,6 +106,23 @@ export default function GalleryUpload() {
     }
   };
 
+  const handleDelete = async (filename: string) => {
+    if (!window.confirm('Voulez-vous vraiment supprimer cette image ?')) return;
+    try {
+      const response = await fetch('/api/gallery', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename }),
+      });
+      if (!response.ok) {
+        throw new Error('Erreur lors de la suppression');
+      }
+      fetchImages();
+    } catch (err) {
+      setError({ message: err instanceof Error ? err.message : 'Erreur lors de la suppression' });
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm">
       <h2 className="text-2xl font-light mb-6">Upload d&apos;images</h2>
@@ -179,7 +196,7 @@ export default function GalleryUpload() {
         <h3 className="text-xl font-light mb-4">Images existantes</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {images.map((image) => (
-            <div key={image.filename} className="relative aspect-square">
+            <div key={image.filename} className="relative aspect-square group">
               <Image
                 src={`/uploads/gallery/${image.filename}`}
                 alt={image.caption}
@@ -191,6 +208,14 @@ export default function GalleryUpload() {
                   {image.caption}
                 </div>
               )}
+              <button
+                type="button"
+                onClick={() => handleDelete(image.filename)}
+                className="absolute top-2 right-2 bg-white bg-opacity-80 hover:bg-opacity-100 text-red-600 rounded-full p-2 shadow transition-opacity opacity-0 group-hover:opacity-100"
+                title="Supprimer l'image"
+              >
+                <FaTrash />
+              </button>
             </div>
           ))}
         </div>
