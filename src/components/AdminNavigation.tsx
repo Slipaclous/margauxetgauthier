@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaImages, FaUserFriends, FaCog, FaSignOutAlt, FaHome, FaPalette, FaEnvelope } from 'react-icons/fa';
+import { FaImages, FaUserFriends, FaCog, FaSignOutAlt, FaHome, FaPalette, FaEnvelope, FaUser } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
 export default function AdminNavigation() {
@@ -51,6 +51,17 @@ export default function AdminNavigation() {
             >
               <FaUserFriends className="w-5 h-5 mr-2" />
               <span className="font-light">RSVP</span>
+            </Link>
+            <Link
+              href="/admin/temoins"
+              className={`flex items-center px-4 transition-colors ${
+                pathname === '/admin/temoins'
+                  ? 'text-[#E13B70] border-b-2 border-[#E13B70]'
+                  : 'text-gray-700 hover:text-[#E13B70]'
+              }`}
+            >
+              <FaUser className="w-5 h-5 mr-2" />
+              <span className="font-light">Témoins</span>
             </Link>
             <Link
               href="/admin/palette"

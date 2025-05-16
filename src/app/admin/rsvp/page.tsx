@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { FaImages, FaUserFriends, FaCog, FaSignOutAlt, FaHome } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
+import AdminNavigation from '@/components/AdminNavigation';
 
 interface Guest {
   id: string;
@@ -25,7 +23,6 @@ interface RSVP {
 }
 
 const RSVPPage = () => {
-  const router = useRouter();
   const [rsvps, setRsvps] = useState<RSVP[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -89,11 +86,6 @@ const RSVPPage = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
-    router.push('/admin');
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -112,52 +104,7 @@ const RSVPPage = () => {
 
   return (
     <div>
-      {/* Navigation */}
-      <div className="bg-white shadow-sm mb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <Link
-                href="/admin"
-                className="flex items-center px-4 text-gray-700 hover:text-[#E13B70] transition-colors"
-              >
-                <FaHome className="w-5 h-5 mr-2" />
-                <span className="font-light">Tableau de bord</span>
-              </Link>
-              <Link
-                href="/admin/gallery"
-                className="flex items-center px-4 text-gray-700 hover:text-[#E13B70] transition-colors"
-              >
-                <FaImages className="w-5 h-5 mr-2" />
-                <span className="font-light">Galerie</span>
-              </Link>
-              <Link
-                href="/admin/rsvp"
-                className="flex items-center px-4 text-[#E13B70] border-b-2 border-[#E13B70]"
-              >
-                <FaUserFriends className="w-5 h-5 mr-2" />
-                <span className="font-light">RSVP</span>
-              </Link>
-              <Link
-                href="/admin/settings"
-                className="flex items-center px-4 text-gray-700 hover:text-[#E13B70] transition-colors"
-              >
-                <FaCog className="w-5 h-5 mr-2" />
-                <span className="font-light">Paramètres</span>
-              </Link>
-            </div>
-            <div className="flex items-center">
-              <button
-                onClick={handleLogout}
-                className="flex items-center px-4 text-gray-700 hover:text-[#E13B70] transition-colors"
-              >
-                <FaSignOutAlt className="w-5 h-5 mr-2" />
-                <span className="font-light">Déconnexion</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AdminNavigation />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
@@ -214,6 +161,7 @@ const RSVPPage = () => {
                 <tr className="bg-[#171717] text-white">
                   <th className="px-6 py-3 text-left text-sm font-light">Nom</th>
                   <th className="px-6 py-3 text-left text-sm font-light">Email</th>
+                  <th className="px-6 py-3 text-left text-sm font-light">Téléphone</th>
                   <th className="px-6 py-3 text-left text-sm font-light">Présence</th>
                   <th className="px-6 py-3 text-left text-sm font-light">Invités</th>
                   <th className="px-6 py-3 text-left text-sm font-light">Message</th>
@@ -226,6 +174,7 @@ const RSVPPage = () => {
                   <tr key={rsvp.id} className="border-b border-gray-100">
                     <td className="px-6 py-4 text-sm text-[#171717]">{rsvp.nom}</td>
                     <td className="px-6 py-4 text-sm text-[#171717]">{rsvp.email}</td>
+                    <td className="px-6 py-4 text-sm text-[#171717]">{rsvp.telephone || '-'}</td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         rsvp.attending
