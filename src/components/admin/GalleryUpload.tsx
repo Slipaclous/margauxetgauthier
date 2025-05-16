@@ -17,6 +17,7 @@ interface ImageMetadata {
   filename: string;
   caption: string;
   order: number;
+  path?: string; // URL publique Supabase
 }
 
 export default function GalleryUpload() {
@@ -198,7 +199,7 @@ export default function GalleryUpload() {
           {images.map((image) => (
             <div key={image.filename} className="relative aspect-square group">
               <Image
-                src={`/uploads/gallery/${image.filename}`}
+                src={image.path || `/uploads/gallery/${image.filename}`}
                 alt={image.caption}
                 fill
                 className="object-cover rounded-lg"
