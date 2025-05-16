@@ -18,6 +18,7 @@ export async function DELETE(
     if (error) throw error;
     return NextResponse.json({ message: 'Couleur supprimée avec succès' });
   } catch (error) {
+    console.error('Erreur lors de la suppression de la couleur:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la suppression de la couleur' },
       { status: 500 }
@@ -37,8 +38,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     if (error) throw error;
     return NextResponse.json(data[0]);
   } catch (error) {
+    console.error('Erreur lors de la modification de la couleur:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de la modification', details: error instanceof Error ? error.message : error },
+      { error: 'Erreur lors de la modification' },
       { status: 500 }
     );
   }
