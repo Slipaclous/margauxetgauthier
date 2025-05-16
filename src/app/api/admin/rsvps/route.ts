@@ -18,7 +18,7 @@ export async function GET() {
 
     const { data: rsvps, error } = await supabase
       .from('rsvps')
-      .select('*')
+      .select('*, guest_list(*)')
       .order('created_at', { ascending: false });
     
     if (error) {
