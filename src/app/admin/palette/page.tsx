@@ -126,6 +126,9 @@ export default function AdminPalette() {
         </p>
       </div>
 
+      {loading && <div className="text-[#E13B70] mb-4">Chargement...</div>}
+      {colorError && <div className="text-red-600 mb-4">{colorError}</div>}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Formulaire */}
         <div className="bg-white rounded-lg shadow-md p-6">
