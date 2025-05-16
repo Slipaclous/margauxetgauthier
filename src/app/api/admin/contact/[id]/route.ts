@@ -5,18 +5,16 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
+interface ContactParams {
+  id: string;
+}
 
 export async function DELETE(
   request: NextRequest,
-  context: RouteParams
+  { params }: { params: ContactParams }
 ): Promise<NextResponse> {
   try {
-    const { id } = context.params;
+    const { id } = params;
     const { error } = await supabase
       .from('contacts')
       .delete()
@@ -35,10 +33,10 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  context: RouteParams
+  { params }: { params: ContactParams }
 ): Promise<NextResponse> {
   try {
-    const { id } = context.params;
+    const { id } = params;
     const body = await request.json();
     const { name, role, phone, email } = body;
     const { data, error } = await supabase
