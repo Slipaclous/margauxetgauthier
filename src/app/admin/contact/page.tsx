@@ -31,7 +31,7 @@ export default function AdminContact() {
         const res = await fetch('/api/admin/contact');
         const data = await res.json();
         setContacts(data || []);
-      } catch (_) {
+      } catch {
         setError('Erreur lors du chargement des contacts');
       } finally {
         setLoading(false);
@@ -55,7 +55,7 @@ export default function AdminContact() {
         const updatedContact = await res.json();
         setContacts(prev => prev.map(c => c.id === editingId ? updatedContact : c));
       } else {
-        // Ajout via Supabase
+        // Ajout d'un nouveau contact via Supabase
         const res = await fetch('/api/admin/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -65,10 +65,10 @@ export default function AdminContact() {
         const newContact = await res.json();
         setContacts(prev => [newContact, ...prev]);
       }
-      setFormData({ name: '', role: 'margaux', phone: '', email: '' });
+      setFormData({ name: '', email: '', phone: '' });
       setEditingId(null);
       setError(null);
-    } catch (_) {
+    } catch {
       setError('Erreur lors de l\'ajout ou modification du contact');
     } finally {
       setLoading(false);
@@ -91,7 +91,7 @@ export default function AdminContact() {
       const res = await fetch(`/api/admin/contact/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Erreur lors de la suppression');
       setContacts(prev => prev.filter(c => c.id !== id));
-    } catch (_) {
+    } catch {
       setError('Erreur lors de la suppression');
     } finally {
       setLoading(false);

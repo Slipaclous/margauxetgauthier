@@ -35,7 +35,7 @@ export default function AdminTemoins() {
         const res = await fetch('/api/admin/temoins');
         const data = await res.json();
         setTemoins(data || []);
-      } catch (_) {
+      } catch {
         setError('Erreur lors du chargement des témoins');
       } finally {
         setLoading(false);
@@ -92,7 +92,7 @@ export default function AdminTemoins() {
       setPreviewUrl('');
       setEditingId(null);
       setError(null);
-    } catch (_) {
+    } catch {
       setError('Erreur lors de l\'ajout ou modification du témoin');
     } finally {
       setLoading(false);
@@ -117,7 +117,7 @@ export default function AdminTemoins() {
       const res = await fetch(`/api/admin/temoins/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Erreur lors de la suppression');
       setTemoins(prev => prev.filter(w => w.id !== id));
-    } catch (_) {
+    } catch {
       setError('Erreur lors de la suppression');
     } finally {
       setLoading(false);

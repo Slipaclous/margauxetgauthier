@@ -28,7 +28,7 @@ export default function AdminPalette() {
         const res = await fetch('/api/admin/palette');
         const data = await res.json();
         setColors(data || []);
-      } catch (_) {
+      } catch {
         setColorError('Erreur lors du chargement de la palette');
       } finally {
         setLoading(false);
@@ -89,7 +89,7 @@ export default function AdminPalette() {
       setFormData({ name: '', value: '#000000' });
       setEditingId(null);
       setColorError(null);
-    } catch (_) {
+    } catch {
       setColorError('Erreur lors de l\'ajout ou modification de la couleur');
     } finally {
       setLoading(false);
@@ -110,7 +110,7 @@ export default function AdminPalette() {
       const res = await fetch(`/api/admin/palette/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Erreur lors de la suppression');
       setColors(prev => prev.filter(c => c.id !== id));
-    } catch (_) {
+    } catch {
       setColorError('Erreur lors de la suppression');
     } finally {
       setLoading(false);
