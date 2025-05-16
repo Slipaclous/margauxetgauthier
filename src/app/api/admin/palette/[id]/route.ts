@@ -5,9 +5,15 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+type RouteParams = {
+  params: {
+    id: string;
+  };
+};
+
 export async function DELETE(
   request: NextRequest,
-  { params }: any
+  { params }: RouteParams
 ) {
   try {
     const { error } = await supabase
@@ -26,7 +32,7 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: any) {
+export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
     const body = await req.json();
     const { name, value, class: colorClass } = body;
