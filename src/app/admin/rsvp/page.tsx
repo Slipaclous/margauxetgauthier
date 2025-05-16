@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import AdminNavigation from '@/components/AdminNavigation';
 
 interface Guest {
   id: string;
@@ -104,8 +103,6 @@ const RSVPPage = () => {
 
   return (
     <div>
-      <AdminNavigation />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-2xl font-light text-[#171717]">Gestion des RSVP</h1>
