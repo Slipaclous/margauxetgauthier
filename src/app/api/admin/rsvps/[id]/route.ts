@@ -7,10 +7,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const rsvpId = params.id;
+    const rsvpId = context.params.id;
     if (!rsvpId) {
       return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
     }
