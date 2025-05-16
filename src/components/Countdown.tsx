@@ -42,7 +42,7 @@ const Countdown = () => {
   ];
 
   return (
-    <div className="flex justify-center space-x-6 md:space-x-12">
+    <div className="flex flex-col items-center gap-4 md:flex-row md:justify-center md:gap-12">
       {timeBlocks.map((block) => (
         <motion.div
           key={block.label}
@@ -50,7 +50,7 @@ const Countdown = () => {
           animate={{ scale: 1 }}
           className="text-center"
         >
-          <div className="border-2 border-[var(--color-black)] p-4 min-w-[100px]">
+          <div className="border-2 border-[var(--color-black)] p-4 min-w-[80px] md:min-w-[100px]">
             <div className="text-3xl md:text-4xl font-bold text-[var(--color-black)]">
               {block.value}
             </div>
