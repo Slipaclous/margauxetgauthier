@@ -13,84 +13,89 @@ interface ContactInfo {
 
 export default function AdminContact() {
   const [contacts, setContacts] = useState<ContactInfo[]>([]);
-  const [formData, setFormData] = useState<ContactInfo>({
-    id: '',
+  const [formData, setFormData] = useState<Omit<ContactInfo, 'id'>>({
     name: '',
     role: 'margaux',
     phone: '',
     email: ''
   });
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Charger les contacts depuis le localStorage
-    const savedContacts = localStorage.getItem('contacts');
-    if (savedContacts) {
-      setContacts(JSON.parse(savedContacts));
-    } else {
-      // Contacts par défaut
-      const defaultContacts: ContactInfo[] = [
-        {
-          id: '1',
-          name: 'Margaux',
-          role: 'margaux' as const,
-          phone: '+32 471 84 34 51',
-          email: 'margauxrenard0312@gmail.com'
-        },
-        {
-          id: '2',
-          name: 'Gauthier',
-          role: 'gauthier' as const,
-          phone: '+32 123 45 67 89',
-          email: 'gauthier.minor@gmail.com'
-        }
-      ];
-      setContacts(defaultContacts);
-      localStorage.setItem('contacts', JSON.stringify(defaultContacts));
-    }
+    // Charger les contacts depuis Supabase
+    const fetchContacts = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/admin/contact');
+        const data = await res.json();
+        setContacts(data || []);
+      } catch (err) {
+        setError('Erreur lors du chargement des contacts');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchContacts();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (editingId) {
-      // Mise à jour d'un contact existant
-      const updatedContacts = contacts.map(contact => 
-        contact.id === editingId ? { ...formData, id: editingId } : contact
-      );
-      setContacts(updatedContacts);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+    setLoading(true);
+    try {
+      if (editingId) {
+        // Mise à jour via Supabase
+        const res = await fetch(`/api/admin/contact/${editingId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Erreur lors de la modification');
+        const updatedContact = await res.json();
+        setContacts(prev => prev.map(c => c.id === editingId ? updatedContact : c));
+      } else {
+        // Ajout via Supabase
+        const res = await fetch('/api/admin/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (!res.ok) throw new Error('Erreur lors de l\'ajout');
+        const newContact = await res.json();
+        setContacts(prev => [newContact, ...prev]);
+      }
+      setFormData({ name: '', role: 'margaux', phone: '', email: '' });
       setEditingId(null);
-    } else {
-      // Ajout d'un nouveau contact
-      const newContact = {
-        ...formData,
-        id: Date.now().toString()
-      };
-      const updatedContacts = [...contacts, newContact];
-      setContacts(updatedContacts);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+      setError(null);
+    } catch (err) {
+      setError('Erreur lors de l\'ajout ou modification du contact');
+    } finally {
+      setLoading(false);
     }
-
-    // Réinitialiser le formulaire
-    setFormData({
-      id: '',
-      name: '',
-      role: 'margaux',
-      phone: '',
-      email: ''
-    });
   };
 
   const handleEdit = (contact: ContactInfo) => {
-    setFormData(contact);
+    setFormData({
+      name: contact.name,
+      role: contact.role,
+      phone: contact.phone,
+      email: contact.email
+    });
     setEditingId(contact.id);
   };
 
-  const handleDelete = (id: string) => {
-    const updatedContacts = contacts.filter(contact => contact.id !== id);
-    setContacts(updatedContacts);
-    localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+  const handleDelete = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/contact/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erreur lors de la suppression');
+      setContacts(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      setError('Erreur lors de la suppression');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

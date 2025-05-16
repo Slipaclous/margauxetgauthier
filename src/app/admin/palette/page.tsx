@@ -18,23 +18,23 @@ export default function AdminPalette() {
   });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [colorError, setColorError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Charger les couleurs depuis le localStorage
-    const savedColors = localStorage.getItem('palette');
-    if (savedColors) {
-      setColors(JSON.parse(savedColors));
-    } else {
-      // Couleurs par défaut
-      const defaultColors = [
-        { id: '1', name: 'Orange', value: '#E88032', class: 'bg-[#E88032]' },
-        { id: '2', name: 'Fushia', value: '#E13B70', class: 'bg-[#E13B70]' },
-        { id: '3', name: 'Rose Clair', value: '#F5BDC6', class: 'bg-[#F5BDC6]' },
-        { id: '4', name: 'Or', value: '#ECC253', class: 'bg-[#ECC253]' }
-      ];
-      setColors(defaultColors);
-      localStorage.setItem('palette', JSON.stringify(defaultColors));
-    }
+    // Charger les couleurs depuis Supabase
+    const fetchColors = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/admin/palette');
+        const data = await res.json();
+        setColors(data || []);
+      } catch (err) {
+        setColorError('Erreur lors du chargement de la palette');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchColors();
   }, []);
 
   const validateHexColor = (color: string) => {
@@ -55,40 +55,45 @@ export default function AdminPalette() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateHexColor(formData.value)) {
       setColorError('Format de couleur invalide. Utilisez le format #RRGGBB ou #RGB');
       return;
     }
-
-    if (editingId) {
-      // Mise à jour d'une couleur existante
-      const updatedColors = colors.map(color => 
-        color.id === editingId ? { ...formData, id: editingId, class: `bg-[${formData.value}]` } : color
-      );
-      setColors(updatedColors);
-      localStorage.setItem('palette', JSON.stringify(updatedColors));
+    setLoading(true);
+    try {
+      if (editingId) {
+        // Mise à jour via Supabase
+        const colorClass = `bg-[${formData.value}]`;
+        const res = await fetch(`/api/admin/palette/${editingId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...formData, class: colorClass })
+        });
+        if (!res.ok) throw new Error('Erreur lors de la modification');
+        const updatedColor = await res.json();
+        setColors(prev => prev.map(c => c.id === editingId ? updatedColor : c));
+      } else {
+        // Ajout d'une nouvelle couleur via Supabase
+        const colorClass = `bg-[${formData.value}]`;
+        const res = await fetch('/api/admin/palette', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...formData, class: colorClass })
+        });
+        if (!res.ok) throw new Error('Erreur lors de l\'ajout');
+        const newColor = await res.json();
+        setColors(prev => [newColor, ...prev]);
+      }
+      setFormData({ name: '', value: '#000000' });
       setEditingId(null);
-    } else {
-      // Ajout d'une nouvelle couleur
-      const newColor = {
-        ...formData,
-        id: Date.now().toString(),
-        class: `bg-[${formData.value}]`
-      };
-      const updatedColors = [...colors, newColor];
-      setColors(updatedColors);
-      localStorage.setItem('palette', JSON.stringify(updatedColors));
+      setColorError(null);
+    } catch (err) {
+      setColorError('Erreur lors de l\'ajout ou modification de la couleur');
+    } finally {
+      setLoading(false);
     }
-
-    // Réinitialiser le formulaire
-    setFormData({
-      name: '',
-      value: '#000000'
-    });
-    setColorError(null);
   };
 
   const handleEdit = (color: Color) => {
@@ -99,10 +104,17 @@ export default function AdminPalette() {
     setEditingId(color.id);
   };
 
-  const handleDelete = (id: string) => {
-    const updatedColors = colors.filter(color => color.id !== id);
-    setColors(updatedColors);
-    localStorage.setItem('palette', JSON.stringify(updatedColors));
+  const handleDelete = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/palette/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Erreur lors de la suppression');
+      setColors(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      setColorError('Erreur lors de la suppression');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

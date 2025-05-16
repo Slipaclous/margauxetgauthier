@@ -24,13 +24,24 @@ export default function AdminTemoins() {
   });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Charger les témoins depuis le localStorage
-    const savedTemoins = localStorage.getItem('temoins');
-    if (savedTemoins) {
-      setTemoins(JSON.parse(savedTemoins));
-    }
+    // Charger les témoins depuis Supabase
+    const fetchTemoins = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/admin/temoins');
+        const data = await res.json();
+        setTemoins(data || []);
+      } catch (err) {
+        setError('Erreur lors du chargement des témoins');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTemoins();
   }, []);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
