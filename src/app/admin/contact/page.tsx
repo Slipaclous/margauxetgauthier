@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaEnvelope, FaPhone, FaUser } from 'react-icons/fa';
+import { FaEnvelope, FaPhone, FaUser, FaTrash, FaEdit } from 'react-icons/fa';
 
 interface ContactInfo {
   id: string;
@@ -216,13 +216,13 @@ export default function AdminContact() {
                     onClick={() => handleEdit(contact)}
                     className="p-2 text-gray-600 hover:text-[#E13B70] transition-colors"
                   >
-                    <FaEnvelope />
+                    <FaEdit />
                   </button>
                   <button
                     onClick={() => handleDelete(contact.id)}
                     className="p-2 text-gray-600 hover:text-red-600 transition-colors"
                   >
-                    <FaPhone />
+                    <FaTrash />
                   </button>
                 </div>
               </div>

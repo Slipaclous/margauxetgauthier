@@ -66,20 +66,22 @@ export default function Gallery() {
       {images.map((image) => (
         <div
           key={image.filename}
-          className="group relative aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+          className="relative aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 bg-[#181818] flex flex-col"
         >
           <Image
             src={image.path}
             alt={image.caption || 'Photo de mariage'}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {image.caption && (
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-end">
-              <p className="w-full p-4 text-white text-sm font-light transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                {image.caption}
-              </p>
+            <div className="w-full absolute bottom-0 left-0 z-10">
+              <div className="backdrop-blur-sm bg-white/80 px-4 py-3 rounded-b-lg shadow-lg flex items-center justify-center">
+                <span className="text-[1.05rem] font-serif text-[#ECC253] drop-shadow-sm text-center" style={{letterSpacing: '0.01em'}}>
+                  {image.caption}
+                </span>
+              </div>
             </div>
           )}
         </div>
