@@ -349,7 +349,7 @@ export default function Home() {
                       </h3>
                       {temoins.filter(t => t.role === 'margaux').map(temoin => (
                         <div key={temoin.id} className="mb-8">
-                          <div className="relative w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gray-100">
+                          <div className="relative w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden bg-gray-100">
                             {temoin.photo ? (
                               <Image
                                 src={temoin.photo}
@@ -386,7 +386,7 @@ export default function Home() {
                       </h3>
                       {temoins.filter(t => t.role === 'gauthier').map(temoin => (
                         <div key={temoin.id} className="mb-8">
-                          <div className="relative w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gray-100">
+                          <div className="relative w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden bg-gray-100">
                             {temoin.photo ? (
                               <Image
                                 src={temoin.photo}
