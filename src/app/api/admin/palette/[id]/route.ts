@@ -12,7 +12,7 @@ export async function DELETE(
 ) {
   try {
     const { error } = await supabase
-      .from('palettes')
+      .from('color_palette')
       .delete()
       .eq('id', params.id);
 
@@ -39,10 +39,10 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json();
-    const { nom, couleurs } = body;
+    const { name, value, class: colorClass } = body;
     const { data, error } = await supabase
-      .from('palettes')
-      .update({ nom, couleurs })
+      .from('color_palette')
+      .update({ name, value, class: colorClass })
       .eq('id', params.id)
       .select();
     if (error) throw error;
