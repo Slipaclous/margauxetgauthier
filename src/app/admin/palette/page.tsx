@@ -203,7 +203,10 @@ export default function AdminPalette() {
                 className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center space-x-4">
-                  <div className={`w-12 h-12 rounded-md ${color.class}`} />
+                  <div
+                    className="w-12 h-12 rounded-md"
+                    style={{ backgroundColor: color.value }}
+                  />
                   <div>
                     <h3 className="font-medium">{color.name}</h3>
                     <p className="text-sm text-gray-600">{color.value}</p>
