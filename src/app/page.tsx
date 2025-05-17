@@ -416,6 +416,9 @@ export default function Home() {
                     </div>
                   </ScrollSection>
                 </div>
+                <p className="text-center mb-6 text-[#171717] font-light italic">
+                  Si vous souhaitez faire un discours, une animation ou une surprise pendant la cérémonie ou la réception, merci de vous adresser directement à nos témoins. Ils coordonneront tout pour que ce moment soit inoubliable !
+                </p>
               </div>
             </ScrollSection>
           </div>
