@@ -16,7 +16,13 @@ export async function DELETE(
       .eq('id', params.id);
 
     if (error) throw error;
-    return NextResponse.json({ message: 'Témoin supprimé avec succès' });
+    return NextResponse.json({ message: 'Témoin supprimé avec succès' }, {
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   } catch (error) {
     console.error('Erreur lors de la suppression du témoin:', error);
     return NextResponse.json(
@@ -39,7 +45,13 @@ export async function PATCH(
       .eq('id', params.id)
       .select();
     if (error) throw error;
-    return NextResponse.json(data[0]);
+    return NextResponse.json(data[0], {
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   } catch (error) {
     console.error('Erreur lors de la modification du témoin:', error);
     return NextResponse.json(

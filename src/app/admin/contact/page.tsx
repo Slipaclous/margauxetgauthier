@@ -28,7 +28,13 @@ export default function AdminContact() {
     const fetchContacts = async () => {
       setLoading(true);
       try {
-        const res = await fetch('/api/admin/contact');
+        const res = await fetch('/api/admin/contact', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
         const data = await res.json();
         setContacts(data || []);
       } catch {

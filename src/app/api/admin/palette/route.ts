@@ -12,7 +12,13 @@ export async function GET() {
       .select('*')
       .order('created_at', { ascending: false });
     if (error) throw error;
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   } catch (error) {
     return NextResponse.json(
       { error: 'Erreur lors de la récupération de la palette', details: error instanceof Error ? error.message : error },
@@ -30,7 +36,13 @@ export async function POST(req: Request) {
       .insert([{ name, value, class: colorClass }])
       .select();
     if (error) throw error;
-    return NextResponse.json(data[0]);
+    return NextResponse.json(data[0], {
+      headers: {
+        'Cache-Control': 'no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   } catch (error) {
     return NextResponse.json(
       { error: 'Erreur lors de l\'ajout de la couleur', details: error instanceof Error ? error.message : error },
