@@ -83,6 +83,14 @@ export default function Home() {
     fetchContacts();
   }, []);
 
+  useEffect(() => {
+    // Forcer l'arrivée en haut de la page si un hash est présent dans l'URL
+    if (typeof window !== 'undefined' && window.location.hash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+
   return (
     <>
       <AnimatePresence>
@@ -167,6 +175,9 @@ export default function Home() {
                 <FaUserFriends className="inline-block mr-3 text-[#E13B70]" />
                 Confirmer sa présence
               </h2>
+              <p className="text-center max-w-2xl mx-auto mb-6 text-[#E13B70] font-semibold bg-[#fff0f6] border border-[#E13B70] rounded-lg py-3 text-lg shadow-sm">
+                Merci de confirmer votre présence avant le <span className="underline">15 juin</span>.
+              </p>
               <p className="text-center max-w-2xl mx-auto mb-12 text-[#171717] font-light">
                 Nous sommes ravis de vous accueillir pour célébrer notre amour et partager ce moment précieux avec vous. Votre présence est le plus beau cadeau que vous puissiez nous offrir.
               </p>
