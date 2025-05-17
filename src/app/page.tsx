@@ -44,19 +44,43 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Charger les témoins depuis le localStorage
-    const savedTemoins = localStorage.getItem('temoins');
-    if (savedTemoins) {
-      setTemoins(JSON.parse(savedTemoins));
-    }
+    // Charger les témoins depuis l'API
+    const fetchTemoins = async () => {
+      try {
+        const res = await fetch('/api/admin/temoins', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        const data = await res.json();
+        setTemoins(data || []);
+      } catch (error) {
+        console.error('Erreur lors du chargement des témoins:', error);
+      }
+    };
+    fetchTemoins();
   }, []);
 
   useEffect(() => {
-    // Charger les contacts depuis le localStorage
-    const savedContacts = localStorage.getItem('contacts');
-    if (savedContacts) {
-      setContacts(JSON.parse(savedContacts));
-    }
+    // Charger les contacts depuis l'API
+    const fetchContacts = async () => {
+      try {
+        const res = await fetch('/api/admin/contact', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        const data = await res.json();
+        setContacts(data || []);
+      } catch (error) {
+        console.error('Erreur lors du chargement des contacts:', error);
+      }
+    };
+    fetchContacts();
   }, []);
 
   return (
