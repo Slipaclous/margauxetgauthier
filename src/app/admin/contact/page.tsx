@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FaEnvelope, FaPhone, FaUser, FaTrash, FaEdit } from 'react-icons/fa';
+import { FaUser, FaTrash, FaEdit } from 'react-icons/fa';
 
 interface ContactInfo {
   id: string;
