@@ -32,6 +32,7 @@ const RSVPPage = () => {
     totalGuests: 0,
   });
   const [rsvpToDelete, setRsvpToDelete] = useState<RSVP | null>(null);
+  const [expandedMessages, setExpandedMessages] = useState<{ [id: string]: boolean }>({});
 
   useEffect(() => {
     fetchRSVPs();
@@ -194,7 +195,19 @@ const RSVPPage = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#171717] max-w-xs truncate">{rsvp.message || '-'}</td>
+                    <td className="px-6 py-4 text-sm text-[#171717] max-w-xs">
+                      <div className={expandedMessages[rsvp.id] ? '' : 'truncate'}>
+                        {rsvp.message || '-'}
+                      </div>
+                      {rsvp.message && rsvp.message.length > 40 && (
+                        <button
+                          className="text-xs text-[#E13B70] underline ml-1 focus:outline-none"
+                          onClick={() => setExpandedMessages(prev => ({ ...prev, [rsvp.id]: !prev[rsvp.id] }))}
+                        >
+                          {expandedMessages[rsvp.id] ? 'Voir moins' : 'Voir plus'}
+                        </button>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm text-[#171717]">
                       {rsvp.created_at ? new Date(rsvp.created_at).toLocaleDateString('fr-FR') : '-'}
                     </td>
