@@ -30,8 +30,8 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
-): Promise<NextResponse> {
+  { params }: any
+) {
   try {
     const { id } = params;
     const body = await request.json();
