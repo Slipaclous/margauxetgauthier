@@ -9,7 +9,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export async function DELETE(
   request: NextRequest,
   { params }: any
-): Promise<NextResponse> {
+) {
   try {
     const { id } = params;
     const { error } = await supabase
@@ -30,7 +30,7 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: any
+  { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
     const { id } = params;
