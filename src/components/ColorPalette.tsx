@@ -12,23 +12,38 @@ interface Color {
 
 const ColorPalette = () => {
   const [colors, setColors] = useState<Color[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Charger les couleurs depuis le localStorage
-    const savedColors = localStorage.getItem('palette');
-    if (savedColors) {
-      setColors(JSON.parse(savedColors));
-    } else {
-      // Couleurs par défaut
-      const defaultColors = [
-        { id: '1', name: 'Orange', value: '#E88032', class: 'bg-[#E88032]' },
-        { id: '2', name: 'Fushia', value: '#E13B70', class: 'bg-[#E13B70]' },
-        { id: '3', name: 'Rose Clair', value: '#F5BDC6', class: 'bg-[#F5BDC6]' },
-        { id: '4', name: 'Or', value: '#ECC253', class: 'bg-[#ECC253]' }
-      ];
-      setColors(defaultColors);
-      localStorage.setItem('palette', JSON.stringify(defaultColors));
-    }
+    const fetchColors = async () => {
+      try {
+        const res = await fetch('/api/admin/palette', {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erreur lors du chargement des couleurs');
+        setColors(data || []);
+      } catch (error) {
+        console.error('Erreur lors du chargement des couleurs:', error);
+        setError(error instanceof Error ? error.message : 'Une erreur est survenue');
+        // Couleurs par défaut en cas d'erreur
+        const defaultColors = [
+          { id: '1', name: 'Orange', value: '#E88032', class: 'bg-[#E88032]' },
+          { id: '2', name: 'Fushia', value: '#E13B70', class: 'bg-[#E13B70]' },
+          { id: '3', name: 'Rose Clair', value: '#F5BDC6', class: 'bg-[#F5BDC6]' },
+          { id: '4', name: 'Or', value: '#ECC253', class: 'bg-[#ECC253]' }
+        ];
+        setColors(defaultColors);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchColors();
   }, []);
 
   // Calculer le nombre de colonnes en fonction du nombre de couleurs
@@ -40,6 +55,22 @@ const ColorPalette = () => {
     if (count <= 6) return 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6';
     return 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4';
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E13B70]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center text-red-600 p-4">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="py-8">

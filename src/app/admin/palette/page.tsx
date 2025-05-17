@@ -44,19 +44,16 @@ export default function AdminPalette() {
 
   const handleColorChange = (value: string) => {
     setColorError(null);
-    if (value.startsWith('#')) {
-      if (validateHexColor(value)) {
-        setFormData(prev => ({ ...prev, value }));
-      } else {
-        setColorError('Format de couleur invalide. Utilisez le format #RRGGBB ou #RGB');
-      }
-    } else {
-      setFormData(prev => ({ ...prev, value: `#${value}` }));
+    // Permettre la saisie progressive
+    if (!value.startsWith('#')) {
+      value = `#${value}`;
     }
+    setFormData(prev => ({ ...prev, value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Valider le format final avant la soumission
     if (!validateHexColor(formData.value)) {
       setColorError('Format de couleur invalide. Utilisez le format #RRGGBB ou #RGB');
       return;
