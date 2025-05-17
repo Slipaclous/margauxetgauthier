@@ -33,6 +33,7 @@ const RSVPPage = () => {
   });
   const [rsvpToDelete, setRsvpToDelete] = useState<RSVP | null>(null);
   const [expandedMessages, setExpandedMessages] = useState<{ [id: string]: boolean }>({});
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchRSVPs();
@@ -195,17 +196,16 @@ const RSVPPage = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#171717] max-w-xs">
-                      <div className={expandedMessages[rsvp.id] ? '' : 'truncate'}>
-                        {rsvp.message || '-'}
-                      </div>
-                      {rsvp.message && rsvp.message.length > 40 && (
+                    <td className="px-4 py-4 text-sm text-[#171717] max-w-xs whitespace-nowrap overflow-ellipsis overflow-hidden">
+                      {rsvp.message && rsvp.message.length > 0 ? (
                         <button
-                          className="text-xs text-[#E13B70] underline ml-1 focus:outline-none"
-                          onClick={() => setExpandedMessages(prev => ({ ...prev, [rsvp.id]: !prev[rsvp.id] }))}
+                          className="text-xs text-[#E13B70] underline focus:outline-none"
+                          onClick={() => setModalMessage(rsvp.message!)}
                         >
-                          {expandedMessages[rsvp.id] ? 'Voir moins' : 'Voir plus'}
+                          Voir le message
                         </button>
+                      ) : (
+                        <span className="text-xs text-gray-400">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm text-[#171717]">
@@ -249,6 +249,28 @@ const RSVPPage = () => {
                   Supprimer
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {modalMessage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+            <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 relative">
+              <h3 className="text-lg font-semibold mb-4 text-[#E13B70]">Message complet</h3>
+              <p className="text-[#171717] whitespace-pre-line mb-6">{modalMessage}</p>
+              <button
+                className="absolute top-3 right-3 text-[#E13B70] text-xl font-bold focus:outline-none"
+                onClick={() => setModalMessage(null)}
+                aria-label="Fermer"
+              >
+                ×
+              </button>
+              <button
+                className="mt-2 px-4 py-2 bg-[#E13B70] text-white rounded hover:bg-[#d12a5f] transition-colors w-full"
+                onClick={() => setModalMessage(null)}
+              >
+                Fermer
+              </button>
             </div>
           </div>
         )}
