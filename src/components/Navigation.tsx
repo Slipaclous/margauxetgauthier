@@ -43,7 +43,7 @@ export default function Navigation() {
                   isScrolled ? 'text-[#171717]' : 'text-[#171717]'
                 }`}
               >
-                M & G
+                M <span className="text-[#E13B70]">&</span> G
               </a>
             </div>
             <div className="flex items-center space-x-8">
@@ -55,6 +55,15 @@ export default function Navigation() {
               >
                 <FaPalette className="w-4 h-4" />
                 <span>Palette</span>
+              </a>
+              <a
+                href="#rsvp"
+                className={`flex items-center space-x-2 ${
+                  isScrolled ? 'text-gray-700 hover:text-[#E13B70]' : 'text-gray-700 hover:text-[#E13B70]'
+                } transition-colors`}
+              >
+                <FaHeart className="w-4 h-4" />
+                <span>RSVP</span>
               </a>
               <a
                 href="#informations"
@@ -101,15 +110,6 @@ export default function Navigation() {
                 <FaEnvelope className="w-4 h-4" />
                 <span>Contact</span>
               </a>
-              <a
-                href="#rsvp"
-                className={`flex items-center space-x-2 ${
-                  isScrolled ? 'text-gray-700 hover:text-[#E13B70]' : 'text-gray-700 hover:text-[#E13B70]'
-                } transition-colors`}
-              >
-                <FaHeart className="w-4 h-4" />
-                <span>RSVP</span>
-              </a>
             </div>
           </div>
         </div>
@@ -136,6 +136,14 @@ export default function Navigation() {
             >
               <FaPalette className="w-5 h-5" />
               <span>Palette</span>
+            </a>
+            <a
+              href="#rsvp"
+              className="flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg"
+              onClick={handleNavClick}
+            >
+              <FaHeart className="w-5 h-5" />
+              <span>RSVP</span>
             </a>
             <a
               href="#informations"
@@ -176,14 +184,6 @@ export default function Navigation() {
             >
               <FaEnvelope className="w-5 h-5" />
               <span>Contact</span>
-            </a>
-            <a
-              href="#rsvp"
-              className="flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg"
-              onClick={handleNavClick}
-            >
-              <FaHeart className="w-5 h-5" />
-              <span>RSVP</span>
             </a>
           </div>
         </div>
