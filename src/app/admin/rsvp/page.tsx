@@ -32,7 +32,6 @@ const RSVPPage = () => {
     totalGuests: 0,
   });
   const [rsvpToDelete, setRsvpToDelete] = useState<RSVP | null>(null);
-  const [expandedMessages, setExpandedMessages] = useState<{ [id: string]: boolean }>({});
   const [modalMessage, setModalMessage] = useState<string | null>(null);
 
   useEffect(() => {
