@@ -345,7 +345,7 @@ export default function Home() {
                     <div className="text-center">
                       <h3 className="text-2xl font-light mb-6 tracking-wider text-[#E13B70]">
                         <FaUser className="inline-block mr-3" />
-                        Témoin de Margaux
+                        Témoins de Margaux
                       </h3>
                       {temoins.filter(t => t.role === 'margaux').map(temoin => (
                         <div key={temoin.id} className="mb-8">
@@ -382,7 +382,7 @@ export default function Home() {
                     <div className="text-center">
                       <h3 className="text-2xl font-light mb-6 tracking-wider text-[#E88032]">
                         <FaUser className="inline-block mr-3" />
-                        Témoin de Gauthier
+                        Témoins de Gauthier
                       </h3>
                       {temoins.filter(t => t.role === 'gauthier').map(temoin => (
                         <div key={temoin.id} className="mb-8">

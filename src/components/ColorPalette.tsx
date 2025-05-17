@@ -83,7 +83,10 @@ const ColorPalette = () => {
             transition={{ delay: index * 0.1 }}
             className="flex flex-col items-center p-4 rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow"
           >
-            <div className={`${color.class} w-full aspect-square rounded-lg mb-3 border border-gray-200`} />
+            <div
+              style={{ backgroundColor: color.value }}
+              className="w-full aspect-square rounded-lg mb-3 border border-gray-200"
+            />
             <h3 className="font-medium text-gray-800">{color.name}</h3>
             <p className="text-sm text-gray-600">{color.value}</p>
           </motion.div>
