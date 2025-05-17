@@ -65,7 +65,7 @@ export default function AdminContact() {
         const newContact = await res.json();
         setContacts(prev => [newContact, ...prev]);
       }
-      setFormData({ name: '', email: '', phone: '' });
+      setFormData({ name: '', role: 'margaux', email: '', phone: '' });
       setEditingId(null);
       setError(null);
     } catch {
