@@ -49,7 +49,7 @@ export default function AdminNavigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center py-3 px-6 rounded-lg transition-colors text-base md:text-lg font-light ${
+                  className={`flex items-center py-3 px-6 rounded-lg transition-colors text-base md:text-lg font-light whitespace-nowrap ${
                     pathname === item.href
                       ? 'text-[#E13B70] bg-[#fbeaf0]'
                       : 'text-gray-700 hover:text-[#E13B70] hover:bg-[#fbeaf0]'
@@ -100,7 +100,7 @@ export default function AdminNavigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg ${
+                className={`flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg whitespace-nowrap ${
                   pathname === item.href ? 'text-[#E13B70]' : ''
                 }`}
                 onClick={handleNavClick}
@@ -114,7 +114,7 @@ export default function AdminNavigation() {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg"
+              className="flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg whitespace-nowrap"
               onClick={handleNavClick}
             >
               <FaExternalLinkAlt className="w-5 h-5" />
@@ -125,7 +125,7 @@ export default function AdminNavigation() {
                 handleLogout();
                 handleNavClick();
               }}
-              className="flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg"
+              className="flex items-center space-x-2 text-gray-700 hover:text-[#E13B70] transition-colors text-lg whitespace-nowrap"
             >
               <FaSignOutAlt className="w-5 h-5" />
               <span>Déconnexion</span>
@@ -134,14 +134,3 @@ export default function AdminNavigation() {
         </div>
       )}
       <style jsx global>{`
-        @keyframes slide-in-right {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
-        }
-        .animate-slide-in-right {
-          animation: slide-in-right 0.3s cubic-bezier(0.4,0,0.2,1);
-        }
-      `}</style>
-    </>
-  );
-} 
