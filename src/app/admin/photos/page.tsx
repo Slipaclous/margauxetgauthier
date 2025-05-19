@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Photo {
   id: string;
@@ -15,6 +16,7 @@ export default function PhotosPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTable, setSelectedTable] = useState<number | 'all'>('all');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPhotos();
@@ -29,6 +31,80 @@ export default function PhotosPage() {
       console.error('Erreur lors de la récupération des photos:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette photo ?')) return;
+
+    setDeletingId(id);
+    try {
+      const response = await fetch(`/api/photos/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Erreur lors de la suppression');
+
+      setPhotos(photos.filter(photo => photo.id !== id));
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      alert('Erreur lors de la suppression de la photo');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleDownload = async (photo: Photo) => {
+    try {
+      const response = await fetch(photo.image_url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `photo-table-${photo.table_number}-${new Date(photo.uploaded_at).toISOString()}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error);
+      alert('Erreur lors du téléchargement de la photo');
+    }
+  };
+
+  const handleDownloadTable = async (tableNumber: number) => {
+    const tablePhotos = photos.filter(photo => photo.table_number === tableNumber);
+    if (tablePhotos.length === 0) return;
+
+    try {
+      // Créer un dossier pour les photos de la table
+      const zip = new JSZip();
+      
+      // Télécharger chaque photo
+      await Promise.all(
+        tablePhotos.map(async (photo) => {
+          const response = await fetch(photo.image_url);
+          const blob = await response.blob();
+          zip.file(
+            `photo-${new Date(photo.uploaded_at).toISOString()}.jpg`,
+            blob
+          );
+        })
+      );
+
+      // Générer et télécharger le ZIP
+      const content = await zip.generateAsync({ type: 'blob' });
+      const url = window.URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `photos-table-${tableNumber}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Erreur lors du téléchargement des photos:', error);
+      alert('Erreur lors du téléchargement des photos');
     }
   };
 
@@ -51,26 +127,44 @@ export default function PhotosPage() {
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Photos des tables
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">
+            Photos des tables
+          </h1>
+          <Link
+            href="/admin/qr-codes"
+            className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+          >
+            Gérer les QR codes
+          </Link>
+        </div>
 
         <div className="mb-8">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Filtrer par table
           </label>
-          <select
-            value={selectedTable}
-            onChange={(e) => setSelectedTable(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          >
-            <option value="all">Toutes les tables</option>
-            {tables.map(table => (
-              <option key={table} value={table}>
-                Table {table}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-4">
+            <select
+              value={selectedTable}
+              onChange={(e) => setSelectedTable(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="all">Toutes les tables</option>
+              {tables.map(table => (
+                <option key={table} value={table}>
+                  Table {table}
+                </option>
+              ))}
+            </select>
+            {selectedTable !== 'all' && (
+              <button
+                onClick={() => handleDownloadTable(selectedTable)}
+                className="mt-1 bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
+              >
+                Télécharger toutes les photos de la table
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -94,6 +188,21 @@ export default function PhotosPage() {
                 <p className="text-xs text-gray-400">
                   {new Date(photo.uploaded_at).toLocaleString()}
                 </p>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={() => handleDownload(photo)}
+                    className="text-sm bg-blue-600 text-white py-1 px-2 rounded hover:bg-blue-700"
+                  >
+                    Télécharger
+                  </button>
+                  <button
+                    onClick={() => handleDelete(photo.id)}
+                    disabled={deletingId === photo.id}
+                    className="text-sm bg-red-600 text-white py-1 px-2 rounded hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {deletingId === photo.id ? 'Suppression...' : 'Supprimer'}
+                  </button>
+                </div>
               </div>
             </div>
           ))}

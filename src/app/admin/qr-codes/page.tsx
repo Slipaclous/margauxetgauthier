@@ -2,6 +2,7 @@
 
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function QRCodesPage() {
   const [numberOfTables, setNumberOfTables] = useState(10);
@@ -10,9 +11,17 @@ export default function QRCodesPage() {
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          QR Codes pour les tables
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">
+            QR Codes pour les tables
+          </h1>
+          <Link
+            href="/admin/photos"
+            className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+          >
+            Voir les photos
+          </Link>
+        </div>
 
         <div className="mb-8">
           <label className="block text-sm font-medium text-gray-700">
