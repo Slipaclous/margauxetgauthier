@@ -3,7 +3,13 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-export default function PhotoUploadPage({ params }: { params: { tableNumber: string } }) {
+interface PageProps {
+  params: {
+    tableNumber: string;
+  };
+}
+
+export default function PhotoUploadPage({ params }: PageProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
