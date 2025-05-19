@@ -34,9 +34,11 @@ export default function PhotoUploadPage({ params }: { params: { tableNumber: str
         setMessage('Photo uploadée avec succès !');
         setSelectedFile(null);
       } else {
-        setMessage('Erreur lors de l\'upload de la photo');
+        const errorData = await response.json();
+        setMessage(errorData.error || 'Erreur lors de l\'upload de la photo');
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Erreur lors de l\'upload:', err);
       setMessage('Erreur lors de l\'upload de la photo');
     } finally {
       setUploading(false);

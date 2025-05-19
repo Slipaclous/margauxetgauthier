@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     // Upload du fichier vers Supabase Storage
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('wedding-photos')
       .upload(fileName, file);
 
