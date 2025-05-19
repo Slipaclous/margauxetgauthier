@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaImages, FaUserFriends, FaSignOutAlt, FaHome, FaPalette, FaEnvelope, FaUser, FaExternalLinkAlt, FaBars, FaTimes } from 'react-icons/fa';
+import { FaImages, FaUserFriends, FaSignOutAlt, FaHome, FaPalette, FaEnvelope, FaUser, FaExternalLinkAlt, FaBars, FaTimes, FaQrcode, FaCamera } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -21,6 +21,8 @@ export default function AdminNavigation() {
   const navItems = [
     { href: '/admin', icon: <FaHome className="w-5 h-5 mr-2" />, label: 'Tableau de bord' },
     { href: '/admin/gallery', icon: <FaImages className="w-5 h-5 mr-2" />, label: 'Galerie' },
+    { href: '/admin/photos', icon: <FaCamera className="w-5 h-5 mr-2" />, label: 'Photos des tables' },
+    { href: '/admin/qr-codes', icon: <FaQrcode className="w-5 h-5 mr-2" />, label: 'QR Codes' },
     { href: '/admin/rsvp', icon: <FaUserFriends className="w-5 h-5 mr-2" />, label: 'RSVP' },
     { href: '/admin/temoins', icon: <FaUser className="w-5 h-5 mr-2" />, label: 'Témoins' },
     { href: '/admin/palette', icon: <FaPalette className="w-5 h-5 mr-2" />, label: 'Palette de couleurs' },
