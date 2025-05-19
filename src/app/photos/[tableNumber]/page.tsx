@@ -1,12 +1,11 @@
 import PhotoUploadForm from './PhotoUploadForm';
 
-interface PageProps {
+type Props = {
   params: {
     tableNumber: string;
   };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+};
 
-export default function PhotoUploadPage({ params }: PageProps) {
+export default function Page({ params }: Props) {
   return <PhotoUploadForm tableNumber={params.tableNumber} />;
 } 
