@@ -76,35 +76,9 @@ export default function PhotosPage() {
     const tablePhotos = photos.filter(photo => photo.table_number === tableNumber);
     if (tablePhotos.length === 0) return;
 
-    try {
-      // Créer un dossier pour les photos de la table
-      const zip = new JSZip();
-      
-      // Télécharger chaque photo
-      await Promise.all(
-        tablePhotos.map(async (photo) => {
-          const response = await fetch(photo.image_url);
-          const blob = await response.blob();
-          zip.file(
-            `photo-${new Date(photo.uploaded_at).toISOString()}.jpg`,
-            blob
-          );
-        })
-      );
-
-      // Générer et télécharger le ZIP
-      const content = await zip.generateAsync({ type: 'blob' });
-      const url = window.URL.createObjectURL(content);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `photos-table-${tableNumber}.zip`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Erreur lors du téléchargement des photos:', error);
-      alert('Erreur lors du téléchargement des photos');
+    // Télécharger chaque photo individuellement
+    for (const photo of tablePhotos) {
+      await handleDownload(photo);
     }
   };
 
