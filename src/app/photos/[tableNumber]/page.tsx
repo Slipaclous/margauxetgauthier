@@ -1,11 +1,9 @@
 import PhotoUploadForm from './PhotoUploadForm';
-import { Metadata } from 'next';
-import { PageParams } from './types';
 
-export const metadata: Metadata = {
-  title: 'Photos',
-};
-
-export default function Page({ params }: { params: PageParams }) {
+export default function Page({
+  params,
+}: {
+  params: { tableNumber: string };
+}) {
   return <PhotoUploadForm tableNumber={params.tableNumber} />;
 } 
