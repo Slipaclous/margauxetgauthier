@@ -1,9 +1,6 @@
 import PhotoUploadForm from './PhotoUploadForm';
 
-export default function Page({
-  params,
-}: {
-  params: { tableNumber: string };
-}) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export default function Page({ params }: any) {
   return <PhotoUploadForm tableNumber={params.tableNumber} />;
 } 
