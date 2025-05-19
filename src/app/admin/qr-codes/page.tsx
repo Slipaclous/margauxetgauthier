@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 export default function QRCodesPage() {
   const [numberOfTables, setNumberOfTables] = useState(10);
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const baseUrl = 'https://margauxetgauthier.vercel.app';
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -41,6 +41,9 @@ export default function QRCodesPage() {
                 includeMargin={true}
               />
               <p className="mt-2 text-lg font-semibold">Table {tableNumber}</p>
+              <p className="text-sm text-gray-500 mt-1">
+                {`${baseUrl}/photos/${tableNumber}`}
+              </p>
             </div>
           ))}
         </div>
