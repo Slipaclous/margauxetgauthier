@@ -238,7 +238,7 @@ export default function RSVPForm() {
             status === 'loading' ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
-          {status === 'loading' ? 'Envoi en cours...' : 'Confirmer ma présence'}
+          {status === 'loading' ? 'Envoi en cours...' : 'Confirmer ma réponse'}
         </button>
       </form>
     </motion.div>
