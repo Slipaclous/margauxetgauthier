@@ -59,9 +59,8 @@ export async function POST(request: NextRequest) {
       .upload(fileName, file);
 
     if (uploadError) {
-      console.error('Erreur Supabase Storage:', uploadError);
       return NextResponse.json(
-        { error: 'Erreur lors de l\'upload vers le stockage' },
+        { error: `Erreur lors de l'upload vers le stockage: ${uploadError.message}` },
         { status: 500 }
       );
     }
@@ -71,30 +70,26 @@ export async function POST(request: NextRequest) {
       .from('wedding-photos')
       .getPublicUrl(fileName);
 
-    // Enregistrement dans la base de données
+    // Enregistrement dans la base de données (seulement les champs existants)
     const { data, error } = await supabase
       .from('photos')
       .insert([
         {
           table_number: tableNum,
           image_url: publicUrl,
-          uploaded_by: uploadedBy || 'invité',
-          original_filename: file.name,
-          file_size: file.size,
-          file_type: file.type
+          uploaded_by: uploadedBy || 'invité'
         }
       ])
       .select();
 
     if (error) {
-      console.error('Erreur base de données:', error);
       // Si l'insertion échoue, supprimer le fichier uploadé
       await supabase.storage
         .from('wedding-photos')
         .remove([fileName]);
       
       return NextResponse.json(
-        { error: 'Erreur lors de l\'enregistrement en base de données' },
+        { error: `Erreur lors de l'enregistrement en base de données: ${error.message}` },
         { status: 500 }
       );
     }
@@ -105,9 +100,8 @@ export async function POST(request: NextRequest) {
       message: 'Photo uploadée avec succès'
     });
   } catch (error) {
-    console.error('Erreur lors de l\'upload de la photo:', error);
     return NextResponse.json(
-      { error: 'Erreur lors de l\'upload de la photo' },
+      { error: `Erreur lors de l'upload de la photo: ${error instanceof Error ? error.message : 'Erreur inconnue'}` },
       { status: 500 }
     );
   }

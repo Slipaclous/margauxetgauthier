@@ -42,9 +42,12 @@ export default function PhotoUploadForm({ tableNumber }: PhotoUploadFormProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Erreur upload pour', file.name, ':', errorData);
         throw new Error(errorData.error || 'Erreur lors de l\'upload');
       }
 
+      const result = await response.json();
+      console.log('Upload réussi pour', file.name, ':', result);
       return true;
     } catch (error) {
       console.error('Erreur lors de l\'upload de', file.name, ':', error);
