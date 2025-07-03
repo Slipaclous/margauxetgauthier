@@ -5,6 +5,10 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Configuration des limites
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -19,14 +23,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validation du type de fichier
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: 'Type de fichier non autorisé. Utilisez JPEG, PNG, WebP ou GIF.' },
+        { status: 400 }
+      );
+    }
+
+    // Validation de la taille du fichier
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `Fichier trop volumineux. Taille maximum : ${MAX_FILE_SIZE / 1024 / 1024}MB` },
+        { status: 400 }
+      );
+    }
+
+    // Validation du numéro de table
+    const tableNum = parseInt(tableNumber);
+    if (isNaN(tableNum) || tableNum < 1 || tableNum > 50) {
+      return NextResponse.json(
+        { error: 'Numéro de table invalide' },
+        { status: 400 }
+      );
+    }
+
     // Upload du fichier vers Supabase Storage
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    const timestamp = Date.now();
+    const randomId = Math.random().toString(36).substring(2, 15);
+    const fileName = `${timestamp}-${randomId}.${fileExt}`;
+    
     const { error: uploadError } = await supabase.storage
       .from('wedding-photos')
       .upload(fileName, file);
 
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      console.error('Erreur Supabase Storage:', uploadError);
+      return NextResponse.json(
+        { error: 'Erreur lors de l\'upload vers le stockage' },
+        { status: 500 }
+      );
+    }
 
     // Récupération de l'URL publique
     const { data: { publicUrl } } = supabase.storage
@@ -38,16 +76,34 @@ export async function POST(request: NextRequest) {
       .from('photos')
       .insert([
         {
-          table_number: parseInt(tableNumber),
+          table_number: tableNum,
           image_url: publicUrl,
-          uploaded_by: uploadedBy
+          uploaded_by: uploadedBy || 'invité',
+          original_filename: file.name,
+          file_size: file.size,
+          file_type: file.type
         }
       ])
       .select();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Erreur base de données:', error);
+      // Si l'insertion échoue, supprimer le fichier uploadé
+      await supabase.storage
+        .from('wedding-photos')
+        .remove([fileName]);
+      
+      return NextResponse.json(
+        { error: 'Erreur lors de l\'enregistrement en base de données' },
+        { status: 500 }
+      );
+    }
 
-    return NextResponse.json(data[0]);
+    return NextResponse.json({
+      ...data[0],
+      success: true,
+      message: 'Photo uploadée avec succès'
+    });
   } catch (error) {
     console.error('Erreur lors de l\'upload de la photo:', error);
     return NextResponse.json(
