@@ -147,24 +147,7 @@ export default function PhotosPage() {
     });
   };
 
-  const toggleAllPhotos = () => {
-    const filteredPhotos = selectedTable === 'all'
-      ? photos
-      : photos.filter(photo => photo.table_number === selectedTable);
-    
-    const filteredIds = filteredPhotos.map(photo => photo.id);
-    const allSelected = filteredIds.every(id => selectedPhotos.has(id));
-    
-    setSelectedPhotos(prev => {
-      const newSet = new Set(prev);
-      if (allSelected) {
-        filteredIds.forEach(id => newSet.delete(id));
-      } else {
-        filteredIds.forEach(id => newSet.add(id));
-      }
-      return newSet;
-    });
-  };
+
 
   const filteredPhotos = selectedTable === 'all'
     ? photos
