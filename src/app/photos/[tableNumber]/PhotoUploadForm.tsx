@@ -123,7 +123,7 @@ export default function PhotoUploadForm({ tableNumber }: PhotoUploadFormProps) {
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold text-center mb-6">
-          Photos - Table {tableNumber}
+          Partagez vos photos
         </h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
